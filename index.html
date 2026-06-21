@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>B 端办公 AI 新方向探索</title>
+    <style>
+      :root {
+        --ink: #14213d;
+        --muted: #64748b;
+        --blue: #2f62c9;
+        --blue-dark: #18499f;
+        --blue-soft: #eaf1ff;
+        --blue-pale: #f5f8ff;
+        --line: #d9e2f3;
+        --canvas: #e9eef7;
+        --paper: #ffffff;
+        --success: #1f7a68;
+        --warm: #b66b2b;
+        --shadow: 0 18px 45px rgb(23 52 102 / 12%);
+      }
+
+      * { box-sizing: border-box; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--canvas);
+        font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        min-height: 58px;
+        padding: 10px max(20px, calc((100vw - 1540px) / 2));
+        color: #eef4ff;
+        background: #101b32;
+        box-shadow: 0 4px 18px rgb(16 27 50 / 28%);
+      }
+
+      .topbar__brand { font-size: 14px; font-weight: 700; letter-spacing: .06em; white-space: nowrap; }
+
+      .topbar__nav { display: flex; gap: 4px; overflow-x: auto; }
+
+      .topbar__nav a {
+        display: block;
+        padding: 6px 9px;
+        color: #afbdd8;
+        font-size: 12px;
+        text-decoration: none;
+        white-space: nowrap;
+        border-radius: 3px;
+      }
+
+      .topbar__nav a:hover, .topbar__nav a.is-active { color: #fff; background: rgb(109 152 244 / 27%); }
+
+      main { max-width: 1600px; margin: 0 auto; padding: 26px 22px 56px; }
+
+      .page {
+        position: relative;
+        min-height: max(780px, calc(100vh - 110px));
+        margin: 0 0 26px;
+        overflow: hidden;
+        background: var(--paper);
+        border: 1px solid #d7e0f0;
+        box-shadow: var(--shadow);
+      }
+
+      .page::after {
+        position: absolute;
+        right: -48px;
+        bottom: -72px;
+        width: 235px;
+        height: 235px;
+        content: "";
+        pointer-events: none;
+        background: radial-gradient(circle, rgb(47 98 201 / 12%) 0 1px, transparent 1px 100%);
+        background-size: 11px 11px;
+        border-radius: 50%;
+        opacity: .72;
+      }
+
+      .page__inner { position: relative; z-index: 1; padding: clamp(28px, 4vw, 68px); }
+
+      .page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 30px; }
+
+      .section-kicker {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 0 10px;
+        color: var(--blue-dark);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: .13em;
+      }
+
+      .section-kicker::before { width: 4px; height: 19px; content: ""; background: var(--blue); }
+
+      h1, h2, h3, p { margin-top: 0; }
+
+      h2 { max-width: 1120px; margin-bottom: 0; font-size: clamp(25px, 2.5vw, 42px); line-height: 1.2; letter-spacing: -.035em; }
+      h3 { margin: 0; font-size: 17px; line-height: 1.35; }
+      p, li, td { font-size: 14px; line-height: 1.72; }
+
+      .page-number { flex: 0 0 auto; color: #8a9ab7; font-size: 12px; font-weight: 700; letter-spacing: .1em; }
+
+      .lead {
+        max-width: 1190px;
+        margin-bottom: 24px;
+        padding: 17px 20px;
+        color: #263854;
+        background: var(--blue-pale);
+        border-left: 4px solid var(--blue);
+        font-size: 17px;
+        line-height: 1.7;
+      }
+
+      .lead strong { color: var(--blue-dark); }
+
+      .cover {
+        display: grid;
+        min-height: max(780px, calc(100vh - 110px));
+        grid-template-columns: minmax(0, 1.18fr) minmax(330px, .82fr);
+        background: linear-gradient(132deg, #f9fbff 0 63%, #ecf3ff 63% 100%);
+      }
+
+      .cover__content { display: flex; flex-direction: column; justify-content: space-between; padding: clamp(36px, 6vw, 92px); }
+
+      .cover__tag {
+        display: inline-flex;
+        align-self: flex-start;
+        padding: 8px 12px;
+        color: var(--blue-dark);
+        background: #dce8ff;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: .12em;
+      }
+
+      .cover h1 { max-width: 800px; margin: 44px 0 18px; font-size: clamp(44px, 6.2vw, 92px); line-height: 1.04; letter-spacing: -.07em; }
+      .cover h1 span { display: block; color: var(--blue); }
+      .cover__subtitle { max-width: 660px; margin-bottom: auto; color: #51627c; font-size: clamp(16px, 1.55vw, 22px); line-height: 1.75; }
+      .cover__meta { display: flex; gap: 28px; padding-top: 38px; color: #6f7f98; font-size: 13px; }
+
+      .cover__side { display: flex; flex-direction: column; justify-content: center; gap: 20px; padding: 70px 48px; background: #174a9f; }
+      .cover__side small { color: #aac8ff; font-weight: 700; letter-spacing: .14em; }
+
+      .cover-card { position: relative; padding: 22px; color: #fff; border: 1px solid rgb(255 255 255 / 28%); background: rgb(255 255 255 / 9%); }
+      .cover-card::before { position: absolute; top: 0; left: 0; width: 52px; height: 4px; content: ""; background: #91b8ff; }
+      .cover-card b { display: block; margin-bottom: 7px; font-size: 18px; }
+      .cover-card span { color: #d8e7ff; font-size: 13px; line-height: 1.65; }
+
+      .toc-map { display: grid; grid-template-columns: 1fr 45px 1fr 45px 1fr; align-items: center; margin: 60px auto 34px; }
+      .toc-node { min-height: 190px; padding: 25px; border: 1px solid var(--line); background: #fff; box-shadow: 0 8px 20px rgb(24 73 159 / 8%); }
+      .toc-node:nth-child(3) { color: #fff; background: var(--blue); border-color: var(--blue); }
+      .toc-node__num { display: block; margin-bottom: 14px; color: var(--blue); font-size: 12px; font-weight: 800; letter-spacing: .12em; }
+      .toc-node:nth-child(3) .toc-node__num { color: #c9ddff; }
+      .toc-node h3 { margin-bottom: 10px; }
+      .toc-node p { margin: 0; color: #61718a; }
+      .toc-node:nth-child(3) p { color: #e1edff; }
+      .flow-arrow { position: relative; height: 2px; background: #9eb9ed; }
+      .flow-arrow::after { position: absolute; top: -5px; right: -1px; border: 6px solid transparent; border-left-color: #9eb9ed; content: ""; }
+      .toc-note { margin: 0 auto; color: #63738d; font-size: 15px; text-align: center; }
+
+      .logic-flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 24px 0 28px; }
+      .logic-card { min-height: 145px; padding: 22px; border: 1px solid var(--line); background: #fff; }
+      .logic-card--blue { color: #fff; background: var(--blue); border-color: var(--blue); }
+      .logic-card__eyebrow { display: block; margin-bottom: 11px; color: var(--blue); font-size: 11px; font-weight: 800; letter-spacing: .12em; }
+      .logic-card--blue .logic-card__eyebrow { color: #cfe0ff; }
+      .logic-card p { margin: 8px 0 0; color: #63738e; }
+      .logic-card--blue p { color: #e2edff; }
+
+      .split-visual { display: grid; grid-template-columns: .8fr 1.2fr; gap: 26px; align-items: stretch; margin-bottom: 26px; }
+      .side-note { display: flex; flex-direction: column; justify-content: center; padding: 27px; color: #294161; background: #f4f7fc; border: 1px solid var(--line); }
+      .side-note h3 { margin-bottom: 14px; color: var(--blue-dark); }
+      .side-note p { margin-bottom: 0; }
+
+      .table-wrap { position: relative; overflow-x: auto; border: 1px solid var(--line); background: #fff; }
+      table { width: 100%; min-width: 670px; border-collapse: collapse; table-layout: fixed; }
+      th { padding: 12px 13px; color: #fff; background: var(--blue-dark); font-size: 13px; line-height: 1.45; text-align: left; vertical-align: top; }
+      td { padding: 13px; color: #2f405c; vertical-align: top; border-top: 1px solid var(--line); overflow-wrap: anywhere; }
+      tbody tr:nth-child(even) td { background: #f8faff; }
+      .table-wrap strong { color: var(--blue-dark); }
+
+      .source-note { margin: 9px 0 24px; color: #78879e; font-size: 12px; }
+
+      .observation-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 26px 0 30px; }
+      .observation { position: relative; min-height: 152px; padding: 22px; background: #f3f7ff; border-top: 4px solid var(--blue); }
+      .observation b { display: block; margin-bottom: 12px; color: var(--blue-dark); font-size: 18px; }
+      .observation span { color: #4d607e; font-size: 13px; line-height: 1.7; }
+
+      .cross-layout { display: grid; grid-template-columns: 305px 1fr; gap: 28px; align-items: start; }
+      .priority-key { padding: 22px; background: #f3f7ff; border: 1px solid var(--line); }
+      .priority-key h3 { margin-bottom: 17px; }
+      .priority-key p { margin-bottom: 13px; color: #536580; }
+      .priority-key p:last-child { margin-bottom: 0; }
+      .pill { display: inline-block; min-width: 36px; margin-right: 8px; padding: 2px 7px; color: #fff; font-size: 12px; font-weight: 800; text-align: center; border-radius: 2px; }
+      .pill--a { background: var(--blue); }
+      .pill--am { background: var(--success); }
+      .pill--b { background: var(--warm); }
+      .pill--c { background: #8a98ad; }
+
+      .conclusion { display: grid; grid-template-columns: .75fr 1.25fr; gap: 34px; align-items: stretch; }
+      .conclusion__statement { display: flex; flex-direction: column; justify-content: center; padding: 36px; color: #fff; background: linear-gradient(145deg, #133f86, #2f62c9); }
+      .conclusion__statement small { margin-bottom: 18px; color: #c9dcff; font-size: 12px; font-weight: 800; letter-spacing: .14em; }
+      .conclusion__statement blockquote { margin: 0; font-size: clamp(25px, 2.6vw, 40px); font-weight: 800; line-height: 1.34; letter-spacing: -.04em; }
+      .conclusion__list { display: grid; gap: 12px; align-content: center; }
+      .choice { display: grid; grid-template-columns: 48px 1fr; gap: 16px; align-items: start; padding: 17px 20px; border: 1px solid var(--line); background: #fff; }
+      .choice__rank { display: grid; width: 34px; height: 34px; color: #fff; background: var(--blue); place-items: center; font-size: 14px; font-weight: 800; }
+      .choice p { margin: 4px 0 0; color: #556883; }
+
+      .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-bottom: 24px; }
+      .two-col .lead { height: 100%; margin: 0; }
+
+      @media (max-width: 900px) {
+        .topbar { align-items: flex-start; flex-direction: column; gap: 5px; }
+        .topbar__nav { width: 100%; }
+        main { padding: 12px; }
+        .page, .cover { min-height: auto; }
+        .cover, .conclusion, .cross-layout, .split-visual { grid-template-columns: 1fr; }
+        .cover__content { min-height: 600px; }
+        .cover__side { padding: 38px 30px; }
+        .toc-map { grid-template-columns: 1fr; gap: 13px; margin: 28px 0; }
+        .flow-arrow { width: 2px; height: 26px; margin-left: 50%; }
+        .flow-arrow::after { top: auto; right: -5px; bottom: -1px; border: 6px solid transparent; border-top-color: #9eb9ed; }
+        .logic-flow, .observation-grid, .two-col { grid-template-columns: 1fr; }
+        .page__inner { padding: 28px 22px; }
+      }
+
+      @media print {
+        @page { size: 16in 9in; margin: 0; }
+        body { background: #fff; }
+        .topbar { display: none; }
+        main { max-width: none; padding: 0; }
+        .page { min-height: 9in; margin: 0; border: 0; box-shadow: none; break-after: page; page-break-after: always; }
+        .page:last-child { break-after: auto; page-break-after: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="topbar" aria-label="章节导航">
+      <div class="topbar__brand">B 端办公 AI · 方向探索</div>
+      <div class="topbar__nav">
+        <a href="#cover" class="is-active">封面</a>
+        <a href="#toc">目录</a>
+        <a href="#iflytek">讯飞</a>
+        <a href="#document">文档智能</a>
+        <a href="#enterprise">大型企业</a>
+        <a href="#sme">中小企业</a>
+        <a href="#cross">供需交叉</a>
+        <a href="#conclusion">结论</a>
+      </div>
+    </nav>
+
+    <main>
+      <section class="page cover" id="cover">
+        <div class="cover__content">
+          <div class="cover__tag">DIRECTION EXPLORATION · 2026</div>
+          <div>
+            <h1>B 端办公 <span>AI 新方向探索</span></h1>
+            <p class="cover__subtitle">供给侧与需求侧综合分析</p>
+          </div>
+          <div class="cover__meta"><span>来源整理日期：2026-06-20</span><span>研究汇报</span></div>
+        </div>
+        <aside class="cover__side" aria-label="报告框架">
+          <small>REPORT FRAME</small>
+          <div class="cover-card"><b>供给侧</b><span>通用办公 AI 已被平台占据，垂直材料工具的底座能力已成熟。</span></div>
+          <div class="cover-card"><b>需求侧</b><span>企业采购的不是抽象 AI，而是材料处理、检查和准备的可信结果。</span></div>
+          <div class="cover-card"><b>交叉结论</b><span>机会来自高价值正式材料任务的审阅、盘点与结构化。</span></div>
+        </aside>
+      </section>
+
+      <section class="page" id="toc">
+        <div class="page__inner">
+          <div class="page-head"><div><p class="section-kicker">01 · CONTENTS</p><h2>一、目录</h2></div><span class="page-number">01 / 07</span></div>
+          <div class="toc-map">
+            <article class="toc-node"><span class="toc-node__num">SUPPLY</span><h3>供给侧：通用办公 AI 已被平台占据</h3><p>从讯飞矩阵与文档智能赛道，判断标品的切入边界。</p></article>
+            <div class="flow-arrow" aria-hidden="true"></div>
+            <article class="toc-node"><span class="toc-node__num">DEMAND</span><h3>需求侧：企业采购的是材料处理结果</h3><p>从大型企业和中小企业的采购行为，确认付费任务。</p></article>
+            <div class="flow-arrow" aria-hidden="true"></div>
+            <article class="toc-node"><span class="toc-node__num">CROSS</span><h3>供需两侧交叉验证的可能性方向</h3><p>将成熟能力和高价值材料任务，收敛为独立标品机会。</p></article>
+          </div>
+          <p class="toc-note">分析路径：<strong>市场供给</strong> → <strong>采购需求</strong> → <strong>独立产品机会</strong></p>
+        </div>
+      </section>
+
+      <section class="page" id="iflytek">
+        <div class="page__inner">
+          <div class="page-head"><div><p class="section-kicker">02 · SUPPLY SIDE</p><h2>二：供给侧：讯飞-企业 AI 标品应切入具体业务任务</h2></div><span class="page-number">02 / 07</span></div>
+          <p class="lead">讯飞矩阵判断：<strong>不应做覆盖所有办公任务的“大而全 AI 助手”，而应做正式材料的窄场景工具。</strong></p>
+          <div class="logic-flow" aria-label="讯飞产品思路">
+            <article class="logic-card"><span class="logic-card__eyebrow">MANAGEMENT</span><h3>管理智变</h3><p>采购、合同、费用、招聘、问答和审核等管理动作分别产品化。</p></article>
+            <article class="logic-card logic-card--blue"><span class="logic-card__eyebrow">GROWTH</span><h3>营销重塑</h3><p>围绕获客、销售沟通、投标与训练等增长动作提供专用工具。</p></article>
+            <article class="logic-card"><span class="logic-card__eyebrow">OFFICE</span><h3>办公新生</h3><p>将图文创作、公文/文书、文档和内容生产拆成多个办公工具。</p></article>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th style="width: 16%">产品组</th><th style="width: 43%">讯飞企业数字化产品</th><th>讯飞的产品思路</th></tr></thead>
+              <tbody>
+                <tr><td>管理智变</td><td>智能招采、智能合同、智能报账、讯飞智聘、星火快答、智审平台。</td><td>将采购、合同、费用、招聘、问答和审核等管理动作分别产品化。</td></tr>
+                <tr><td>营销重塑</td><td>星火投标、会话智能、星火陪练、虚拟人交互机、星火快译。</td><td>围绕获客、销售沟通、投标与训练等增长动作提供专用工具。</td></tr>
+                <tr><td>办公新生</td><td>讯飞绘文、讯飞文书、讯飞智文、讯飞文档、讯飞智作。</td><td>将图文创作、公文/文书、文档和内容生产拆成多个办公工具。</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="split-visual" style="margin-top: 26px; margin-bottom: 0">
+            <aside class="side-note"><h3>产品共同特点</h3><p>共同特点是：用户能直接上传一份文件或一个材料包，得到可人工核对的结果。</p></aside>
+            <aside class="side-note"><h3>小团队独立标品的约束</h3><p>它们不依赖深度接入企业 OA、CRM、财务或 HR 系统，云盘和 IM 只需作为取件、分享与通知入口，符合小团队独立标品的约束。</p></aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="document">
+        <div class="page__inner">
+          <div class="page-head"><div><p class="section-kicker">03 · SUPPLY SIDE</p><h2>三：供给侧：文档智能已经形成独立产品赛道</h2></div><span class="page-number">03 / 07</span></div>
+          <p class="lead">以 TextIn 为代表的厂商已将文档解析、表格/版面理解、字段抽取和合同审查做成 API、SaaS 与私有化产品；xParse 明确服务于复杂文档到 AI 可用数据的转换。[S4][S5]</p>
+          <div class="split-visual">
+            <aside class="side-note"><h3>赛道结构</h3><p>底层解析能力已经产品化；新的产品价值，不在重复造解析模型，而在材料类型、检查规则和结果呈现。</p></aside>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th style="width: 31%">产品能力</th><th style="width: 31%">代表供给</th><th>可切入空间</th></tr></thead>
+                <tbody>
+                  <tr><td>文档解析、分类与字段抽取</td><td>TextIn xParse、OCR/文档 API。</td><td>底层解析可复用成熟能力，产品价值应落在材料类型、检查规则和结果呈现。</td></tr>
+                  <tr><td>合同差异和要素识别</td><td>TextIn 智能合同审查。</td><td>合同是独立付费场景，但必须限制输出责任。</td></tr>
+                  <tr><td>文档阅读、校阅、写作与数据处理</td><td>WPS、腾讯混元等。</td><td>单纯润色不足以售卖，提交前检查、一致性与完整性更有产品空间。</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="observation-grid">
+            <div class="observation"><b>成熟底座</b><span>解析、表格、版面和字段抽取已可通过现有能力组合实现。</span></div>
+            <div class="observation"><b>垂直材料</b><span>围绕正式材料设计检查规则、结果引用和人工复核，是更可售卖的价值。</span></div>
+            <div class="observation"><b>明确边界</b><span>不必自研解析模型，也不应做泛文档助手。</span></div>
+          </div>
+          <p class="lead" style="margin-bottom: 0">供给侧的第二层判断是：<strong>文档能力并非空白市场，但成熟底座反而降低了做垂直材料工具的门槛。</strong> 产品不必自研解析模型，也不应做泛文档助手。</p>
+        </div>
+      </section>
+
+      <section class="page" id="enterprise">
+        <div class="page__inner">
+          <div class="page-head"><div><p class="section-kicker">04 · DEMAND SIDE</p><h2>四、需求侧：大型企业为高风险材料的处理能力买单</h2></div><span class="page-number">04 / 07</span></div>
+          <p class="lead">通过对2026年公开招标文件和采购公告的梳理，大型企业在AI办公领域的采购呈现以下特征：</p>
+          <div class="table-wrap">
+            <table style="min-width: 980px">
+              <thead><tr><th style="width: 17%">招标主体</th><th style="width: 21%">项目名称</th><th style="width: 17%">预算/中标金额</th><th style="width: 24%">核心需求场景</th><th>关键门槛</th></tr></thead>
+              <tbody>
+                <tr><td>山东港口集团（青岛港）</td><td>基于AI的办公系统采购</td><td>未公开预算（要求200万+同类业绩）</td><td>政策解读、通用文档助手、智能审核、智能出题</td><td>2023年至今200万+AI软件开发业绩、不接受联合体</td></tr>
+                <tr><td>北京市平谷区政务服务和数据管理局</td><td>平谷区智能体应用平台建设</td><td>271万元（火山引擎中标266万元）</td><td>领学材料收集、智能生成会议纪要、汇总分析决策辅助</td><td>私有化/集约化部署、安全可控、多场景适配</td></tr>
+                <tr><td>中国化学工程集团</td><td>招采平台人工智能场景应用建设</td><td>未公开</td><td>招标文件检测、围串标识别、智能辅助评标</td><td>央企本地化部署案例、成立不少于3年</td></tr>
+                <tr><td>某部智能会议室建设</td><td>智能会议室建设项目</td><td>99.2万元</td><td>无纸化会议+AI纪要</td><td>政务级安全要求</td></tr>
+                <tr><td>隆昌市公安局</td><td>智慧无纸化会议系统</td><td>约38万元</td><td>无纸化会议管理</td><td>公安系统合规</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="source-note"><strong>数据来源</strong>：中国电力招标网、中国政府采购网、山东港口阳光招采平台、智东西</p>
+          <p class="lead">公开招采和供应商征集的检索结果中，智能文档处理、文档理解、OCR、智能解析、数字化加工和智能校对持续出现；金融相关样本还强调多格式、表格、印章和批量材料处理。[D1][D2][D3]</p>
+          <div class="table-wrap">
+            <table style="min-width: 940px">
+              <thead><tr><th style="width: 23%">采购主题</th><th style="width: 27%">买方正在解决的问题</th><th style="width: 23%">典型人工替代方案</th><th>对标准产品的启示</th></tr></thead>
+              <tbody>
+                <tr><td>文档解析与数字化加工</td><td>扫描件、PDF、表格和附件无法被批量整理和复用。</td><td>人工录入、Excel 汇总、按文件夹命名管理。</td><td>做文件分类、字段提取、材料清单和结构化导出。</td></tr>
+                <tr><td>材料校对与规范检查</td><td>正式材料的缺项、错敏、格式和前后矛盾难以一次检查完。</td><td>多轮 Word 修订、清单核对、人工复审。</td><td>做缺项、格式、名称、日期、金额和主体一致性检查。</td></tr>
+                <tr><td>文档理解进入业务链路</td><td>文件要进入授信、档案、采购等后续系统，但人工预处理成本高。</td><td>专人看件、纸质/电子件重复录入、临时外包。</td><td>只做通用材料预处理，不进入授信、档案规则或行业决策。</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="sme">
+        <div class="page__inner">
+          <div class="page-head"><div><p class="section-kicker">05 · DEMAND SIDE</p><h2>五、中小企业：购买的是开箱即用的结果，而非 AI 平台</h2></div><span class="page-number">05 / 07</span></div>
+          <p class="lead">36 氪企服点评提供选型、试用、案例、需求提交与顾问服务入口；阿里云云市场中可见电子合同、表格/数据分析、低代码、文档和 AI 工具等标准化商品。[D5][D6] 这两类渠道共同说明，中小企业对企业软件的购买方式更接近“选择具体品类并立刻使用”，而不是从零建设 AI 能力。</p>
+          <div class="logic-flow">
+            <article class="logic-card"><span class="logic-card__eyebrow">01</span><h3>选择具体品类</h3><p>用户从电子合同、数据分析、低代码、文档等已知品类进入。</p></article>
+            <article class="logic-card logic-card--blue"><span class="logic-card__eyebrow">02</span><h3>立刻可用</h3><p>无需从零建设 AI 能力，不把接入复杂度转嫁给客户。</p></article>
+            <article class="logic-card"><span class="logic-card__eyebrow">03</span><h3>获得明确结果</h3><p>以材料包、项目包或部门任务衡量价值，而不是模型、Token 或 Agent。</p></article>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th style="width: 30%">中小企业已熟悉的购买品类</th><th style="width: 30%">购买背后的任务</th><th>对候选方向的启示</th></tr></thead>
+              <tbody>
+                <tr><td>电子合同 / 电子签章</td><td>合同流转、版本和签署留痕。</td><td>合同版本比对和要素提取应作为清晰的单点工具，而非泛法务平台。</td></tr>
+                <tr><td>表格 / 数据分析</td><td>清洗数据、生成公式和做业务汇报。</td><td>轻量表格分析可做，但只解决单表和固定报告模板，不做 BI。</td></tr>
+                <tr><td>低代码 / 表单</td><td>用少量配置解决部门材料收集和协作。</td><td>材料清单、缺件检查和结果导出比复杂流程自动化更符合标品定位。</td></tr>
+                <tr><td>文档 / 语音类工具</td><td>快速转化、整理和分享办公信息。</td><td>产品应支持直接上传、明确输出和可分享报告，不把接入复杂度转嫁给客户。</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="lead" style="margin: 26px 0 0">中小企业的主要购买判断可以归结为三句话：<strong>是否马上可用、是否能省掉重复人工、是否能避免一次明显的返工。</strong> 因而产品的价值表达应围绕材料包、项目包或部门任务，而不是模型、Token 或 Agent。</p>
+        </div>
+      </section>
+
+      <section class="page" id="cross">
+        <div class="page__inner">
+          <div class="page-head"><div><p class="section-kicker">06 · CROSS VALIDATION</p><h2>六、供需交叉：机会来自高价值材料任务</h2></div><span class="page-number">06 / 07</span></div>
+          <p class="lead">供给侧表明通用能力已拥挤、文档能力可复用；需求侧表明企业为文件理解、检查和材料准备付费。两侧交叉后，机会集中在“将一组正式材料处理成可信结果”的工具。</p>
+          <div class="cross-layout">
+            <aside class="priority-key"><h3>优先级释义</h3><p><span class="pill pill--a">A</span>独立标品主线</p><p><span class="pill pill--am">A-</span>基础能力可复用</p><p><span class="pill pill--b">B</span>第二梯队机会</p><p><span class="pill pill--c">C</span>暂不作为主线</p></aside>
+            <div class="table-wrap">
+              <table style="min-width: 1040px">
+                <thead><tr><th style="width: 8%">优先级</th><th style="width: 18%">方向</th><th style="width: 24%">用户问题</th><th style="width: 33%">独立使用与价值判断</th><th>关键边界</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="pill pill--a">A</span></td><td><strong>材料审阅助手</strong></td><td>正式材料提交前反复返工，人工难以同时检查附件、格式、版本、名称、日期、金额和主体一致性。</td><td>上传一份文件或材料包，选择检查模板，获得带引用位置的问题清单。首批覆盖项目汇报、制度文件和通用方案；不依赖外部系统，通用规则可覆盖多个部门。</td><td>不给专业合规结论，不自动修改原文。</td></tr>
+                  <tr><td><span class="pill pill--a">A</span></td><td><strong>标书 / 投标材料助手</strong></td><td>招标文件长，评分/否决项分散、附件多，团队难以在时间压力下完成材料盘点和一致性检查。</td><td>上传招标文件、投标材料和资质附件，获得评分项、材料清单、缺件和问题引用。与材料审阅共享基础能力，但购买人、模板和定价不同，值得单独包装。</td><td>不承诺中标，不做策略决策或自动提交。</td></tr>
+                  <tr><td><span class="pill pill--am">A-</span></td><td><strong>文档抽取与材料结构化</strong></td><td>PDF、扫描件、表格和附件中的信息无法复用，只能靠人工录入和整理。</td><td>批量上传文件，按通用模板抽取标题、日期、主体、金额、项目和有效期，导出字段表或材料清单。适用合同/协议、项目资料、报销附件、报价单和方案。</td><td>归档只是可选输出；不进入金融授信、档案管理等深行业流程。</td></tr>
+                  <tr><td><span class="pill pill--b">B</span></td><td><strong>合同版本比对与要素提取</strong></td><td>长合同多版本流转，电子版和扫描件不一致，人工比对耗时。</td><td>上传两个或多个版本，获得条款差异、关键字段表和待确认事项。商业价值强，但合同模板、法务流程和责任敏感度使其适合第二梯队。</td><td>只提示差异和缺项，不输出法律意见。</td></tr>
+                  <tr><td><span class="pill pill--c">C</span></td><td>审批材料预填 / 流程 Agent</td><td>价值存在，但独立售卖通常需要接 OA、组织、权限和业务系统。</td><td>适合作为材料类产品的后续能力，不具备当前独立标品所需的低集成特性。</td><td>不作为当前独立产品主线。</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="conclusion">
+        <div class="page__inner">
+          <div class="page-head"><div><p class="section-kicker">07 · CONCLUSION</p><h2>结论</h2></div><span class="page-number">07 / 07</span></div>
+          <div class="conclusion">
+            <aside class="conclusion__statement"><small>RECOMMENDED DIRECTION</small><blockquote>面向企业正式材料的 AI 审阅与结构化工具。</blockquote><p>可独立使用；可从云盘快速取文件，也可从 IM 分享和接收结果。</p></aside>
+            <div class="conclusion__list">
+              <article class="choice"><div class="choice__rank">01</div><div><h3>材料审阅助手：</h3><p>最均衡的独立标品机会，可从通用材料检查起步。</p></div></article>
+              <article class="choice"><div class="choice__rank">02</div><div><h3>标书 / 投标材料助手：</h3><p>在材料审阅能力上做高价值、强痛点的独立包装。（❌已有放弃）</p></div></article>
+              <article class="choice"><div class="choice__rank">03</div><div><h3>文档抽取与材料结构化：</h3><p>适合处理批量文件和形成可复用数据，但避免进入行业流程项目。</p></div></article>
+              <article class="choice"><div class="choice__rank">04</div><div><h3>合同版本比对与要素提取：</h3><p>商业价值高，严格限定责任边界后进入第二梯队。（❌已有放弃）</p></div></article>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const links = [...document.querySelectorAll('.topbar__nav a')];
+      const pages = [...document.querySelectorAll('main > section[id]')];
+      const activate = (id) => links.forEach((link) => link.classList.toggle('is-active', link.getAttribute('href') === `#${id}`));
+      const observer = new IntersectionObserver((entries) => {
+        const current = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (current) activate(current.target.id);
+      }, { threshold: [0.35, 0.55] });
+      pages.forEach((page) => observer.observe(page));
+    </script>
+  </body>
+</html>
