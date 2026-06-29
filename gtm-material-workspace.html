@@ -1,0 +1,3510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GTM Copilot - 个人材料工作区</title>
+  <style>
+    :root {
+      --ink: #1e2430;
+      --muted: #667085;
+      --soft: #f6f8fb;
+      --panel: #ffffff;
+      --line: #d9e2ea;
+      --side: #eaf7fa;
+      --side-strong: #d7f1f5;
+      --cyan: #00c7c7;
+      --cyan-dark: #009fa2;
+      --blue: #3778ff;
+      --green: #18a957;
+      --orange: #f59d25;
+      --red: #f04438;
+      --shadow: 0 28px 80px rgba(8, 20, 38, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.12);
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 20% 12%, rgba(0, 199, 199, 0.2), transparent 24%),
+        radial-gradient(circle at 78% 80%, rgba(55, 120, 255, 0.16), transparent 24%),
+        #06090d;
+      font-family: "Avenir Next", "PingFang SC", "Microsoft YaHei", sans-serif;
+      display: grid;
+      place-items: center;
+      padding: 34px;
+    }
+
+    .app {
+      width: min(1720px, 96vw);
+      height: min(940px, 92vh);
+      min-height: 760px;
+      background: var(--panel);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 292px 1fr;
+      grid-template-rows: 58px 1fr;
+    }
+
+    .topbar {
+      grid-column: 1 / -1;
+      background: #e8f3f6;
+      border-bottom: 1px solid rgba(122, 143, 158, 0.26);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-weight: 760;
+      letter-spacing: 0;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background:
+        radial-gradient(circle at 32% 36%, #78dce0 0 26%, transparent 27%),
+        radial-gradient(circle at 67% 62%, #1baab0 0 30%, transparent 31%),
+        linear-gradient(135deg, #d9fbff, #28c1c8);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+    }
+
+    .brand span {
+      font-size: 20px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-button {
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      color: #313845;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      position: relative;
+      transition: background 160ms ease, transform 160ms ease;
+    }
+
+    .icon-button:hover {
+      background: rgba(255, 255, 255, 0.75);
+      transform: translateY(-1px);
+    }
+
+    .badge {
+      position: absolute;
+      top: 2px;
+      right: 1px;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: #f04b5f;
+      color: #fff;
+      font-size: 10px;
+      display: grid;
+      place-items: center;
+      border: 2px solid #e8f3f6;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background:
+        linear-gradient(#ffd9bf, #f2a077 48%, #443049 49%),
+        #d7f1f5;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.9);
+      margin-left: 5px;
+    }
+
+    .sidebar {
+      background: linear-gradient(180deg, #f2fbfd, var(--side));
+      border-right: 1px solid rgba(122, 143, 158, 0.22);
+      padding: 18px 18px 20px;
+      overflow: auto;
+    }
+
+    .nav-section {
+      display: grid;
+      gap: 5px;
+    }
+
+    .nav-title {
+      font-size: 12px;
+      font-weight: 760;
+      color: #677281;
+      letter-spacing: 0;
+      margin: 15px 10px 7px;
+    }
+
+    .nav-item {
+      min-height: 42px;
+      border-radius: 8px;
+      color: #374151;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 0 12px;
+      font-size: 15px;
+      font-weight: 560;
+      cursor: pointer;
+      position: relative;
+      transition: background 160ms ease, color 160ms ease;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.65);
+    }
+
+    .nav-item.active {
+      background: #d9eef3;
+      color: #17202b;
+      font-weight: 760;
+    }
+
+    .nav-item.active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 9px;
+      bottom: 9px;
+      width: 4px;
+      border-radius: 999px;
+      background: var(--cyan);
+    }
+
+    .nav-icon {
+      width: 21px;
+      height: 21px;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      color: #445062;
+      flex: none;
+    }
+
+    .divider {
+      height: 1px;
+      background: rgba(122, 143, 158, 0.26);
+      margin: 18px 4px;
+    }
+
+    .draft-card {
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(122, 143, 158, 0.2);
+    }
+
+    .draft-card strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .mini-progress {
+      height: 8px;
+      border-radius: 999px;
+      background: #e4edf2;
+      overflow: hidden;
+    }
+
+    .mini-progress span {
+      display: block;
+      width: 68%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--cyan), #4bd388);
+    }
+
+    .main {
+      background: #fbfcfe;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .view {
+      height: 100%;
+      min-height: 0;
+      display: none;
+      grid-template-rows: auto 1fr;
+    }
+
+    .view.active {
+      display: grid;
+    }
+
+    .page-header {
+      padding: 26px 30px 16px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .eyebrow {
+      color: var(--cyan-dark);
+      font-size: 13px;
+      font-weight: 760;
+      margin-bottom: 6px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .title-with-help {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+    }
+
+    .help-tip {
+      width: 20px;
+      height: 20px;
+      border: 1px solid #c9d8e3;
+      border-radius: 50%;
+      background: #fff;
+      color: #5d6878;
+      display: inline-grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: help;
+      position: relative;
+    }
+
+    .help-tooltip {
+      position: absolute;
+      left: calc(100% + 10px);
+      top: 50%;
+      transform: translateY(-50%) translateX(-4px);
+      width: 360px;
+      border: 1px solid #d7e2ea;
+      border-radius: 12px;
+      background: #fff;
+      color: #4d5868;
+      padding: 12px 13px;
+      font-size: 13px;
+      line-height: 1.55;
+      font-weight: 650;
+      box-shadow: 0 18px 42px rgba(16, 40, 62, 0.16);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 150ms ease, transform 150ms ease;
+      z-index: 20;
+    }
+
+    .help-tip:hover .help-tooltip,
+    .help-tip:focus .help-tooltip {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .button {
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      color: #2d3642;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      border-color: #b9c9d6;
+      box-shadow: 0 8px 18px rgba(14, 32, 49, 0.08);
+    }
+
+    .button.primary {
+      color: #05393b;
+      background: #aef3f3;
+      border-color: #62dddd;
+    }
+
+    .workflow {
+      margin: 0 30px 18px;
+      padding: 12px 14px;
+      border: 1px solid #dfe9f0;
+      background: #ffffff;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 8px 24px rgba(29, 54, 75, 0.04);
+    }
+
+    .pill {
+      border: 1px solid #d7e2ea;
+      background: #f7fafc;
+      color: #3b4755;
+      min-height: 30px;
+      border-radius: 999px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .pill.active {
+      background: #dcfbfb;
+      border-color: #91e5e5;
+      color: #07595b;
+    }
+
+    .arrow {
+      color: #a4b0bd;
+      font-weight: 800;
+    }
+
+    .workspace {
+      min-height: 0;
+      padding: 0 30px 30px;
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      gap: 18px;
+      overflow: hidden;
+    }
+
+    .history-panel {
+      min-height: 0;
+      border: 1px solid #dfe9f0;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 12px 30px rgba(16, 40, 62, 0.05);
+      overflow: hidden;
+    }
+
+    .chat-panel {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      min-height: 0;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      overflow: visible;
+    }
+
+    .session-bar {
+      padding: 0 2px 12px;
+      border-bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      background: transparent;
+    }
+
+    .session-title {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .session-title strong {
+      font-size: 17px;
+    }
+
+    .chips {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      min-height: 26px;
+      border-radius: 999px;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 760;
+      background: #f3f6f9;
+      color: #526071;
+      border: 1px solid #e0e7ef;
+    }
+
+    .chip.cyan {
+      background: #e1fbfb;
+      border-color: #aaeaea;
+      color: #087174;
+    }
+
+    .chip.orange {
+      background: #fff2df;
+      border-color: #ffd69a;
+      color: #9a5b05;
+    }
+
+    .chip.green {
+      background: #e8f8ed;
+      border-color: #b9ecc9;
+      color: #19723a;
+    }
+
+    .chat-thread {
+      overflow: auto;
+      padding: 22px;
+      background:
+        linear-gradient(#ffffff 0 0) padding-box,
+        repeating-linear-gradient(90deg, rgba(0, 199, 199, 0.03) 0 1px, transparent 1px 28px);
+    }
+
+    .message {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+      animation: rise 420ms ease both;
+    }
+
+    .message:nth-child(2) { animation-delay: 70ms; }
+    .message:nth-child(3) { animation-delay: 140ms; }
+    .message:nth-child(4) { animation-delay: 210ms; }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .bubble-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+      background: #566273;
+    }
+
+    .message.ai .bubble-avatar {
+      background: linear-gradient(135deg, #00c7c7, #3778ff);
+    }
+
+    .bubble {
+      max-width: 850px;
+      padding: 14px 15px;
+      border: 1px solid #e1e7ef;
+      border-radius: 14px;
+      background: #fff;
+      color: #2c3542;
+      line-height: 1.56;
+      font-size: 14px;
+      box-shadow: 0 6px 18px rgba(16, 40, 62, 0.04);
+    }
+
+    .message.user .bubble {
+      background: #f7fafc;
+    }
+
+    .preview-card {
+      margin-top: 12px;
+      border: 1px solid #cfe0ea;
+      border-radius: 13px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .preview-header {
+      padding: 13px 14px;
+      border-bottom: 1px solid #edf1f5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fbfdff;
+    }
+
+    .preview-header strong {
+      font-size: 15px;
+    }
+
+    .outline {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      padding: 13px 14px 15px;
+    }
+
+    .outline-item {
+      padding: 10px 12px;
+      border: 1px solid #e5ecf2;
+      border-radius: 10px;
+      background: #fbfdff;
+      color: #455166;
+      font-size: 13px;
+      font-weight: 690;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .number {
+      width: 22px;
+      height: 22px;
+      border-radius: 7px;
+      background: #e2fbfb;
+      color: #087174;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      flex: none;
+    }
+
+    .composer {
+      border-top: 0;
+      padding: 0;
+      background: transparent;
+    }
+
+    .composer-context {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .composer-box {
+      min-height: 178px;
+      border: 1px solid #cbd8e2;
+      border-radius: 16px;
+      background: #fbfdff;
+      padding: 13px 14px;
+      display: grid;
+      grid-template-rows: auto minmax(82px, 1fr) auto;
+      gap: 12px;
+      transition: border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .composer-box:focus-within {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 4px rgba(0, 199, 199, 0.12);
+    }
+
+    textarea {
+      border: 0;
+      outline: 0;
+      resize: none;
+      background: transparent;
+      min-height: 42px;
+      color: #202938;
+      font: inherit;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .composer-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tool-group {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .tool-menu {
+      position: relative;
+    }
+
+    .small-tool {
+      height: 30px;
+      border: 1px solid #d9e2ea;
+      background: #fff;
+      border-radius: 9px;
+      padding: 0 10px;
+      color: #4b5565;
+      font-weight: 730;
+      cursor: pointer;
+    }
+
+    .tool-popover {
+      position: absolute;
+      left: 0;
+      bottom: calc(100% + 10px);
+      width: 320px;
+      border: 1px solid #d4e3ed;
+      border-radius: 14px;
+      background: #fff;
+      padding: 12px;
+      box-shadow: 0 18px 42px rgba(16, 40, 62, 0.16);
+      opacity: 0;
+      transform: translateY(6px);
+      pointer-events: none;
+      transition: opacity 150ms ease, transform 150ms ease;
+      z-index: 10;
+    }
+
+    .tool-menu:hover .tool-popover,
+    .tool-menu:focus-within .tool-popover {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .tool-popover h3 {
+      margin: 0 0 9px;
+      font-size: 13px;
+    }
+
+    .tool-popover p {
+      margin: -4px 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .send {
+      height: 34px;
+      border: 0;
+      border-radius: 10px;
+      padding: 0 15px;
+      color: #05393b;
+      font-weight: 820;
+      background: #8ceeee;
+      cursor: pointer;
+      box-shadow: 0 7px 17px rgba(0, 164, 164, 0.2);
+    }
+
+    .selector-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .selector-card {
+      border: 1px solid #dce7ee;
+      border-radius: 12px;
+      background: #fff;
+      padding: 11px;
+    }
+
+    .selector-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 9px;
+    }
+
+    .selector-heading strong {
+      font-size: 13px;
+    }
+
+    .selector-heading span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .source-choice,
+    .template-choice {
+      border: 1px solid #dce7ee;
+      border-radius: 999px;
+      background: #f7fafc;
+      color: #435064;
+      min-height: 29px;
+      padding: 0 10px;
+      font-size: 12px;
+      font-weight: 760;
+      cursor: pointer;
+      transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+    }
+
+    .source-choice.active,
+    .template-choice.active {
+      border-color: #7de1e1;
+      background: #e3fbfb;
+      color: #07595b;
+    }
+
+    .selector-options,
+    .template-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .history-panel {
+      padding: 16px;
+    }
+
+    .history-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .history-head strong {
+      font-size: 16px;
+    }
+
+    .history-head span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .history-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .history-item {
+      border: 1px solid #e0e8ef;
+      border-radius: 12px;
+      background: #fbfdff;
+      padding: 12px;
+      min-height: 106px;
+      display: grid;
+      align-content: space-between;
+      gap: 10px;
+      transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+    }
+
+    .history-item:hover {
+      transform: translateY(-1px);
+      border-color: #a9dede;
+      box-shadow: 0 10px 24px rgba(16, 40, 62, 0.07);
+    }
+
+    .history-item strong {
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .history-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .lead-workspace {
+      min-height: 0;
+      padding: 0 30px 30px;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 18px;
+      overflow: hidden;
+    }
+
+    .lead-input-bar {
+      border: 1px solid #dfe9f0;
+      border-radius: 14px;
+      background: #fff;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 10px 28px rgba(16, 40, 62, 0.05);
+    }
+
+    .lead-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .lead-label {
+      font-weight: 820;
+      color: #263241;
+    }
+
+    .select-pill {
+      min-height: 38px;
+      border: 1px solid #d7e2ea;
+      border-radius: 10px;
+      background: #fff;
+      color: #263241;
+      padding: 0 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .refresh-button {
+      height: 38px;
+      border: 1px solid #d7e2ea;
+      border-radius: 10px;
+      background: #fff;
+      color: #263241;
+      padding: 0 15px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 760;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .refresh-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(14, 32, 49, 0.08);
+    }
+
+    .lead-grid {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr) 330px;
+      gap: 16px;
+    }
+
+    .filter-panel,
+    .signal-panel,
+    .customer-panel {
+      min-height: 0;
+      border: 1px solid #dfe9f0;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 12px 30px rgba(16, 40, 62, 0.05);
+      overflow: hidden;
+    }
+
+    .filter-panel,
+    .customer-panel {
+      padding: 16px;
+      overflow: auto;
+    }
+
+    .filter-title,
+    .signal-title,
+    .customer-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .filter-title strong,
+    .signal-title strong,
+    .customer-title strong {
+      font-size: 18px;
+    }
+
+    .reset-link,
+    .sort-link {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 760;
+      cursor: pointer;
+    }
+
+    .filter-block {
+      padding: 14px 0;
+      border-top: 1px solid #edf1f5;
+    }
+
+    .filter-block:first-of-type {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .filter-block h3 {
+      margin: 0 0 11px;
+      font-size: 14px;
+    }
+
+    .check-row,
+    .radio-row {
+      min-height: 30px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: #4d5868;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .check-box,
+    .radio-dot {
+      width: 17px;
+      height: 17px;
+      border: 2px solid #c9d5df;
+      flex: none;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 11px;
+    }
+
+    .check-box {
+      border-radius: 5px;
+    }
+
+    .check-row.active .check-box {
+      border-color: var(--cyan);
+      background: var(--cyan);
+    }
+
+    .signal-color {
+      width: 15px;
+      height: 15px;
+      border-radius: 4px;
+      flex: none;
+    }
+
+    .radio-dot {
+      border-radius: 50%;
+    }
+
+    .radio-row.active .radio-dot {
+      border-color: var(--cyan);
+      box-shadow: inset 0 0 0 4px #fff;
+      background: var(--cyan);
+    }
+
+    .score-slider {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
+      color: #4d5868;
+      font-weight: 760;
+    }
+
+    .slider-track {
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--cyan) 0 76%, #e3ebf1 76%);
+      position: relative;
+    }
+
+    .slider-track::after {
+      content: "";
+      position: absolute;
+      left: 74%;
+      top: 50%;
+      width: 18px;
+      height: 18px;
+      border: 2px solid #aebdca;
+      border-radius: 50%;
+      background: #fff;
+      transform: translateY(-50%);
+    }
+
+    .signal-panel {
+      padding: 16px;
+      overflow: auto;
+    }
+
+    .signal-card {
+      border: 1px solid #dfe9f0;
+      border-radius: 14px;
+      background: #fff;
+      padding: 14px;
+      margin-bottom: 14px;
+      transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    }
+
+    .signal-card.selected {
+      border-color: #6ddddd;
+      background: #f7ffff;
+      box-shadow: 0 10px 28px rgba(0, 166, 166, 0.08);
+    }
+
+    .signal-card:hover {
+      transform: translateY(-1px);
+    }
+
+    .signal-head {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .company-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid #dbe5ec;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 900;
+      background: #e53935;
+      font-size: 20px;
+    }
+
+    .company-logo.cloud {
+      background: #2d9cff;
+    }
+
+    .company-logo.industry {
+      background: #ef4444;
+    }
+
+    .stars {
+      color: #ffb21a;
+      letter-spacing: 1px;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .signal-time {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .intent-tag {
+      border-radius: 8px;
+      padding: 5px 8px;
+      background: #ddfbfb;
+      color: #087174;
+      font-weight: 800;
+      font-size: 12px;
+    }
+
+    .signal-lines {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .signal-line {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 10px;
+      color: #344054;
+      font-size: 14px;
+    }
+
+    .signal-label {
+      border: 1px solid currentColor;
+      border-radius: 7px;
+      padding: 3px 7px;
+      font-size: 12px;
+      font-weight: 790;
+      background: #fff;
+    }
+
+    .signal-label.red { color: #e04444; }
+    .signal-label.orange { color: #f07e22; }
+    .signal-label.yellow { color: #b98a00; }
+    .signal-label.purple { color: #9b43d8; }
+    .signal-label.blue { color: #1971e8; }
+    .signal-label.green { color: #16a34a; }
+
+    .signal-footer {
+      border-top: 1px solid #edf1f5;
+      padding-top: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .score {
+      color: #08999b;
+      font-size: 16px;
+      font-weight: 860;
+    }
+
+    .urgent {
+      color: #ef4444;
+      font-weight: 860;
+    }
+
+    .medium {
+      color: #f07e22;
+      font-weight: 860;
+    }
+
+    .customer-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .customer-name {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 16px;
+    }
+
+    .customer-name h2 {
+      margin: 0;
+      font-size: 21px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      border: 1px solid #e1e8ef;
+      border-radius: 10px;
+      padding: 10px;
+      background: #fbfdff;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .metric strong {
+      font-size: 18px;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .timeline-row {
+      display: grid;
+      grid-template-columns: 42px 18px 1fr;
+      align-items: start;
+      gap: 8px;
+      color: #485466;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .timeline-dot {
+      width: 10px;
+      height: 10px;
+      margin-top: 5px;
+      border-radius: 50%;
+      background: var(--cyan);
+    }
+
+    .advice {
+      border-top: 1px solid #edf1f5;
+      padding-top: 15px;
+    }
+
+    .advice h3 {
+      margin: 0 0 10px;
+      font-size: 15px;
+    }
+
+    .advice-row {
+      display: grid;
+      grid-template-columns: 82px 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 9px;
+      color: #4d5868;
+      font-size: 13px;
+    }
+
+    .advice-key {
+      border-radius: 8px;
+      background: #e2fbfb;
+      color: #087174;
+      padding: 8px 9px;
+      font-weight: 860;
+      text-align: center;
+    }
+
+    .lead-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .opportunity-workspace {
+      min-height: 0;
+      padding: 0 30px 30px;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 16px;
+      overflow: hidden;
+    }
+
+    .opportunity-toolbar {
+      border: 1px solid #dfe9f0;
+      border-radius: 14px;
+      background: #fff;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      box-shadow: 0 10px 26px rgba(16, 40, 62, 0.04);
+    }
+
+    .opportunity-tabs,
+    .opportunity-filters {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .opportunity-tab {
+      min-height: 34px;
+      border: 1px solid #dfe9f0;
+      border-radius: 10px;
+      background: #fff;
+      color: #3b4755;
+      padding: 0 12px;
+      font-size: 13px;
+      font-weight: 820;
+      cursor: pointer;
+    }
+
+    .opportunity-tab.active {
+      border-color: #7de1e1;
+      background: #e2fbfb;
+      color: #07595b;
+    }
+
+    .opportunity-filter {
+      min-height: 34px;
+      border: 1px solid #dfe9f0;
+      border-radius: 10px;
+      background: #f8fbfd;
+      color: #526071;
+      padding: 0 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .opportunity-grid {
+      min-height: 0;
+      overflow: auto;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      padding-right: 4px;
+    }
+
+    .opportunity-card {
+      border: 1px solid #dfe9f0;
+      border-radius: 14px;
+      background: #fff;
+      padding: 16px;
+      min-height: 236px;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 14px;
+      box-shadow: 0 12px 30px rgba(16, 40, 62, 0.05);
+      cursor: pointer;
+      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .opportunity-card:hover {
+      transform: translateY(-2px);
+      border-color: #a9dede;
+      box-shadow: 0 16px 34px rgba(16, 40, 62, 0.08);
+    }
+
+    .opportunity-card.hot {
+      border-color: #7de1e1;
+      background: linear-gradient(180deg, #f7ffff, #fff 40%);
+    }
+
+    .opportunity-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .opportunity-title {
+      min-width: 0;
+    }
+
+    .opportunity-title h2 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      line-height: 1.28;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .opportunity-title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 720;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .stage-tag {
+      flex: none;
+      border-radius: 9px;
+      padding: 6px 9px;
+      background: #e2fbfb;
+      color: #087174;
+      font-size: 12px;
+      font-weight: 860;
+      white-space: nowrap;
+    }
+
+    .stage-tag.orange {
+      background: #fff2df;
+      color: #9a5b05;
+    }
+
+    .stage-tag.blue {
+      background: #eef6ff;
+      color: #2b7de9;
+    }
+
+    .project-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .project-meta div {
+      border: 1px solid #edf1f5;
+      border-radius: 10px;
+      background: #fbfdff;
+      padding: 10px;
+      min-width: 0;
+    }
+
+    .project-meta span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .project-meta strong {
+      display: block;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .project-progress {
+      align-self: end;
+    }
+
+    .progress-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #526071;
+      font-size: 12px;
+      font-weight: 780;
+      margin-bottom: 8px;
+    }
+
+    .progress-line {
+      height: 8px;
+      border-radius: 999px;
+      background: #e4edf2;
+      overflow: hidden;
+    }
+
+    .progress-line span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--cyan), #4bd388);
+    }
+
+    .opportunity-footer {
+      border-top: 1px solid #edf1f5;
+      padding-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .team-stack {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .team-avatar {
+      width: 28px;
+      height: 28px;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3778ff, #00c7c7);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 860;
+      margin-left: -7px;
+    }
+
+    .team-avatar:first-child {
+      margin-left: 0;
+    }
+
+    .latest-action {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 760;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: right;
+    }
+
+    .view-project-detail {
+      grid-template-rows: auto minmax(0, 1fr);
+      background: #fbfcfe;
+    }
+
+    .project-detail-header {
+      border-bottom: 1px solid #dfe9f0;
+      background: #fff;
+      padding: 18px 30px 16px;
+      display: grid;
+      gap: 14px;
+      box-shadow: 0 10px 26px rgba(16, 40, 62, 0.035);
+      z-index: 2;
+    }
+
+    .detail-nav-row,
+    .detail-title-row,
+    .detail-actions,
+    .project-identity,
+    .project-owner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .detail-nav-row,
+    .detail-title-row {
+      justify-content: space-between;
+    }
+
+    .back-button {
+      border: 0;
+      background: transparent;
+      color: #344054;
+      font-size: 14px;
+      font-weight: 820;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .detail-kicker {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .project-identity {
+      min-width: 0;
+      flex-wrap: wrap;
+    }
+
+    .project-identity h1 {
+      font-size: 26px;
+      line-height: 1.2;
+      min-width: 0;
+    }
+
+    .customer-name-pill {
+      border-radius: 999px;
+      background: #f3f6f9;
+      border: 1px solid #e0e7ef;
+      color: #435064;
+      min-height: 30px;
+      padding: 0 11px;
+      display: inline-flex;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .project-owner {
+      flex: none;
+    }
+
+    .more-menu {
+      position: relative;
+    }
+
+    .more-popover {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      width: 128px;
+      border: 1px solid #dce7ee;
+      border-radius: 12px;
+      background: #fff;
+      padding: 6px;
+      box-shadow: 0 16px 34px rgba(16, 40, 62, 0.13);
+      opacity: 0;
+      transform: translateY(6px);
+      pointer-events: none;
+      transition: opacity 150ms ease, transform 150ms ease;
+      z-index: 10;
+    }
+
+    .more-menu:hover .more-popover,
+    .more-menu:focus-within .more-popover {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .more-popover button {
+      width: 100%;
+      min-height: 32px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: #435064;
+      text-align: left;
+      padding: 0 9px;
+      font-weight: 760;
+      cursor: pointer;
+    }
+
+    .more-popover button:hover {
+      background: #f3f6f9;
+    }
+
+    .more-popover button.danger {
+      color: #d92d20;
+    }
+
+    .owner-avatar {
+      width: 32px;
+      height: 32px;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff9a22, #3778ff);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: 0 4px 12px rgba(16, 40, 62, 0.12);
+    }
+
+    .project-submeta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      color: #667085;
+      font-size: 13px;
+      font-weight: 720;
+    }
+
+    .project-submeta strong {
+      color: #344054;
+      font-weight: 860;
+    }
+
+    .project-detail-body {
+      min-height: 0;
+      padding: 16px 30px 30px;
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 16px;
+      overflow: hidden;
+    }
+
+    .project-side {
+      border: 1px solid #dfe9f0;
+      border-radius: 14px;
+      background: #fff;
+      padding: 14px;
+      box-shadow: 0 12px 30px rgba(16, 40, 62, 0.05);
+      overflow: auto;
+    }
+
+    .project-side-title {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 780;
+      margin: 4px 8px 10px;
+    }
+
+    .project-side-item {
+      min-height: 40px;
+      border-radius: 10px;
+      color: #3b4755;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0 10px;
+      font-size: 14px;
+      font-weight: 780;
+      cursor: pointer;
+    }
+
+    .project-side-item.active {
+      background: #e2fbfb;
+      color: #07595b;
+    }
+
+    .project-main {
+      min-height: 0;
+      border: 1px solid #dfe9f0;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 12px 30px rgba(16, 40, 62, 0.05);
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      overflow: hidden;
+    }
+
+    .outputs-header {
+      padding: 16px;
+      border-bottom: 1px solid #edf1f5;
+      display: grid;
+      gap: 13px;
+      background: #fbfdff;
+    }
+
+    .outputs-title-row,
+    .outputs-tools,
+    .output-filters,
+    .material-actions {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    .outputs-title-row {
+      justify-content: space-between;
+    }
+
+    .outputs-title-row h2 {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.25;
+    }
+
+    .outputs-title-row p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .output-search {
+      min-width: 240px;
+      height: 36px;
+      border: 1px solid #dce7ee;
+      border-radius: 10px;
+      background: #fff;
+      padding: 0 12px;
+      color: #344054;
+      font: inherit;
+      font-size: 13px;
+      outline: 0;
+    }
+
+    .output-filter {
+      min-height: 34px;
+      border: 1px solid #dce7ee;
+      border-radius: 10px;
+      background: #fff;
+      color: #526071;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .outputs-content {
+      min-height: 0;
+      overflow: auto;
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .material-group {
+      border: 1px solid #dfe9f0;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .material-group-head {
+      min-height: 46px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: #fbfdff;
+      border-bottom: 1px solid #edf1f5;
+    }
+
+    .material-group-head strong {
+      font-size: 15px;
+    }
+
+    .material-count {
+      min-width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: #eef3f7;
+      color: #475467;
+      display: inline-grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .material-list {
+      display: grid;
+    }
+
+    .material-row {
+      min-height: 68px;
+      padding: 12px 14px;
+      display: grid;
+      grid-template-columns: 32px minmax(0, 1fr) auto auto;
+      gap: 12px;
+      align-items: center;
+      border-top: 1px solid #edf1f5;
+    }
+
+    .material-row:first-child {
+      border-top: 0;
+    }
+
+    .file-type {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: #eef6ff;
+      color: #2b7de9;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .file-type.sheet {
+      background: #e8f8ed;
+      color: #16803a;
+    }
+
+    .file-type.doc {
+      background: #e2fbfb;
+      color: #087174;
+    }
+
+    .material-name {
+      min-width: 0;
+    }
+
+    .material-name strong {
+      display: block;
+      color: #253044;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .material-name span,
+    .material-editor {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 720;
+    }
+
+    .status-tag {
+      border-radius: 999px;
+      padding: 6px 9px;
+      background: #fff2df;
+      color: #9a5b05;
+      font-size: 12px;
+      font-weight: 860;
+      white-space: nowrap;
+    }
+
+    .status-tag.done {
+      background: #e8f8ed;
+      color: #16803a;
+    }
+
+    .status-tag.review {
+      background: #eef6ff;
+      color: #2b7de9;
+    }
+
+    .material-actions button {
+      height: 30px;
+      border: 1px solid #dce7ee;
+      border-radius: 9px;
+      background: #fff;
+      color: #435064;
+      padding: 0 9px;
+      font-size: 12px;
+      font-weight: 760;
+      cursor: pointer;
+    }
+
+    .empty-material {
+      min-height: 76px;
+      padding: 18px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 720;
+    }
+
+    .library-workspace {
+      min-height: 0;
+      padding: 0 30px 30px;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr);
+      gap: 16px;
+      overflow: hidden;
+    }
+
+    .library-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      border-bottom: 1px solid #dfe9f0;
+      overflow: visible;
+      padding-bottom: 12px;
+    }
+
+    .library-tab {
+      border: 0;
+      background: transparent;
+      color: #2e3948;
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 820;
+      white-space: nowrap;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .library-tab.active {
+      background: linear-gradient(180deg, #15c7c7, #08aeb0);
+      color: #fff;
+      box-shadow: 0 9px 18px rgba(0, 172, 172, 0.18);
+    }
+
+    .library-tab.active::after {
+      content: "";
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: -10px;
+      height: 3px;
+      border-radius: 999px;
+      background: var(--cyan);
+    }
+
+    .library-stats {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .stat-chip {
+      min-height: 42px;
+      border: 1px solid #dfe9f0;
+      border-radius: 10px;
+      background: #fff;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #344054;
+      font-size: 14px;
+      font-weight: 820;
+      box-shadow: 0 8px 20px rgba(16, 40, 62, 0.04);
+    }
+
+    .stat-chip.active {
+      border-color: #b9e8ff;
+      background: #f2fbff;
+      color: #1570ef;
+    }
+
+    .stat-count {
+      min-width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: #eef3f7;
+      color: #475467;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .product-grid {
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      padding-right: 4px;
+    }
+
+    .product-card {
+      border: 1px solid #e0e8ef;
+      border-radius: 14px;
+      background: #fff;
+      padding: 16px;
+      min-height: 170px;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      gap: 16px;
+      box-shadow: 0 10px 26px rgba(16, 40, 62, 0.05);
+      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-2px);
+      border-color: #a9dede;
+      box-shadow: 0 16px 34px rgba(16, 40, 62, 0.08);
+    }
+
+    .product-head {
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .product-title {
+      min-width: 0;
+    }
+
+    .product-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 900;
+      background: linear-gradient(135deg, #3677ff, #63a1ff);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.32);
+    }
+
+    .product-icon.teal { background: linear-gradient(135deg, #04a7a9, #25d1c7); }
+    .product-icon.purple { background: linear-gradient(135deg, #7547f5, #a16bff); }
+    .product-icon.orange { background: linear-gradient(135deg, #ff9a22, #ffc05c); }
+
+    .product-title h2 {
+      margin: 0 0 7px;
+      font-size: 18px;
+      line-height: 1.25;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .product-title p {
+      margin: 0;
+      color: #5d6878;
+      font-size: 13px;
+      line-height: 1.55;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .category-tag {
+      border-radius: 8px;
+      background: #eef6ff;
+      color: #2b7de9;
+      padding: 5px 8px;
+      font-size: 12px;
+      font-weight: 820;
+      white-space: nowrap;
+    }
+
+    .category-tag.green {
+      background: #e8f8ed;
+      color: #16803a;
+    }
+
+    .category-tag.orange {
+      background: #fff1df;
+      color: #b95f08;
+    }
+
+    .product-footer {
+      border-top: 1px solid #edf1f5;
+      padding-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: #667085;
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .ready-tag,
+    .todo-tag {
+      border-radius: 8px;
+      padding: 6px 9px;
+      font-size: 12px;
+      font-weight: 860;
+      white-space: nowrap;
+    }
+
+    .ready-tag {
+      background: #dcf8e8;
+      color: #16803a;
+    }
+
+    .todo-tag {
+      background: #fff0df;
+      color: #c36b0a;
+    }
+
+    .settings-panel {
+      overflow: auto;
+      padding: 18px;
+    }
+
+    .panel-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .panel-title strong {
+      font-size: 17px;
+    }
+
+    .section-card {
+      border: 1px solid #dfe9f0;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 14px;
+      background: #fff;
+    }
+
+    .section-card h2 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+
+    .source-card {
+      border: 1px solid #dce7ee;
+      border-radius: 12px;
+      padding: 11px;
+      margin-top: 9px;
+      cursor: pointer;
+      background: #fbfdff;
+      transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .source-card:hover,
+    .source-card.selected {
+      border-color: #7de1e1;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(0, 162, 162, 0.08);
+    }
+
+    .source-card.selected {
+      background: #effefe;
+    }
+
+    .source-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .source-top strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    .source-top p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .check {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--cyan);
+      color: #fff;
+      font-size: 12px;
+      flex: none;
+    }
+
+    .mini-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .mini-list span {
+      border-radius: 999px;
+      background: #f2f6f8;
+      color: #566274;
+      padding: 5px 8px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .template-grid {
+      display: grid;
+      gap: 7px;
+    }
+
+    .template-option {
+      border: 1px solid #dce7ee;
+      border-radius: 10px;
+      padding: 10px 11px;
+      background: #fbfdff;
+      font-size: 13px;
+      font-weight: 740;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: border-color 160ms ease, background 160ms ease;
+    }
+
+    .template-option.active {
+      background: #e5fbfb;
+      border-color: #82e2e2;
+      color: #07595b;
+    }
+
+    .destination {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .destination button {
+      min-height: 60px;
+      border-radius: 12px;
+      border: 1px solid #dce7ee;
+      background: #fbfdff;
+      text-align: left;
+      padding: 10px;
+      cursor: pointer;
+      color: #3b4755;
+      font-weight: 750;
+    }
+
+    .destination button.active {
+      border-color: #7de1e1;
+      background: #eaffff;
+    }
+
+    .hint {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      display: inline-block;
+    }
+
+    svg {
+      width: 19px;
+      height: 19px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    @media (max-width: 1180px) {
+      body {
+        padding: 0;
+        place-items: stretch;
+      }
+
+      .app {
+        width: 100vw;
+        height: 100vh;
+        min-height: 860px;
+        border-radius: 0;
+      }
+
+      .workspace {
+        overflow: auto;
+      }
+
+      .history-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .lead-grid {
+        grid-template-columns: 210px minmax(360px, 1fr) 310px;
+        overflow: auto;
+      }
+
+      .opportunity-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .opportunity-grid {
+        grid-template-columns: repeat(3, minmax(280px, 1fr));
+      }
+
+      .project-detail-body {
+        grid-template-columns: 190px minmax(560px, 1fr);
+        overflow: auto;
+      }
+
+      .material-row {
+        grid-template-columns: 32px minmax(0, 1fr) auto;
+      }
+
+      .material-actions {
+        grid-column: 2 / -1;
+      }
+
+      .product-grid {
+        grid-template-columns: repeat(3, minmax(230px, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: 58px auto 1fr;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .page-header {
+        flex-direction: column;
+      }
+
+      .project-detail-header {
+        padding: 18px;
+      }
+
+      .detail-title-row,
+      .outputs-title-row {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .project-detail-body {
+        grid-template-columns: 1fr;
+        padding: 14px;
+        overflow: auto;
+      }
+
+      .project-side {
+        display: flex;
+        gap: 8px;
+        overflow: auto;
+      }
+
+      .project-side-title {
+        display: none;
+      }
+
+      .project-side-item {
+        white-space: nowrap;
+      }
+
+      .output-search {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .material-row {
+        grid-template-columns: 32px minmax(0, 1fr);
+      }
+
+      .status-tag {
+        grid-column: 2;
+        justify-self: start;
+      }
+
+      .material-actions {
+        grid-column: 1 / -1;
+      }
+
+      .selector-row,
+      .history-grid,
+      .lead-grid,
+      .opportunity-grid,
+      .product-grid,
+      .metric-grid,
+      .lead-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .outline {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" role="application" aria-label="GTM Copilot 个人材料工作区">
+    <header class="topbar">
+      <div class="brand" aria-label="GTM Copilot">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <span>GTM Copilot</span>
+      </div>
+      <div class="toolbar" aria-label="工具栏">
+        <button class="icon-button" aria-label="通知">
+          <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"></path><path d="M13.7 21a2 2 0 0 1-3.4 0"></path></svg>
+          <span class="badge">6</span>
+        </button>
+        <button class="icon-button" aria-label="搜索"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg></button>
+        <button class="icon-button" aria-label="设置"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1A2 2 0 1 1 4.4 17l.1-.1A1.7 1.7 0 0 0 4.8 15a1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.3a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1A2 2 0 1 1 7.2 4.4l.1.1A1.7 1.7 0 0 0 9 4.8a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.3a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1A2 2 0 1 1 19.6 7l-.1.1a1.7 1.7 0 0 0-.3 1.8 1.7 1.7 0 0 0 1.5 1h.3a2 2 0 1 1 0 4h-.3a1.7 1.7 0 0 0-1.3 1.1Z"></path></svg></button>
+        <button class="icon-button" aria-label="帮助"><svg viewBox="0 0 24 24"><path d="M9 9a3 3 0 1 1 5.1 2.1c-1.1 1-2.1 1.7-2.1 3.4"></path><path d="M12 18h.01"></path><circle cx="12" cy="12" r="10"></circle></svg></button>
+        <button class="icon-button" aria-label="应用"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg></button>
+        <div class="avatar" aria-label="用户头像"></div>
+      </div>
+    </header>
+
+    <aside class="sidebar">
+      <div class="nav-section">
+        <div class="nav-title">业务模块</div>
+        <div class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 13h6V4H4v9Z"></path><path d="M14 20h6V4h-6v16Z"></path><path d="M4 20h6v-3H4v3Z"></path></svg></span>
+          工作台
+        </div>
+        <div class="nav-item" data-view-target="leads">
+          <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M21 21l-5.2-5.2"></path><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M10.5 7v3.5l2.4 1.4"></path></svg></span>
+          线索发现
+        </div>
+        <div class="nav-item" data-view-target="opportunities">
+          <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 7h16"></path><path d="M4 12h10"></path><path d="M4 17h16"></path><path d="M17 10l3 2-3 2"></path></svg></span>
+          商机项目
+        </div>
+        <div class="nav-item" data-view-target="library">
+          <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5V6a2 2 0 0 1 2-2h12v16H6a2 2 0 0 1-2-2Z"></path><path d="M8 8h6"></path><path d="M8 12h8"></path></svg></span>
+          产品材料库
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="nav-section">
+        <div class="nav-title">个人空间</div>
+        <div class="nav-item active" data-view-target="material">
+          <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 3v4"></path><path d="M12 17v4"></path><path d="M4.9 4.9l2.8 2.8"></path><path d="M16.3 16.3l2.8 2.8"></path><path d="M3 12h4"></path><path d="M17 12h4"></path><path d="M4.9 19.1l2.8-2.8"></path><path d="M16.3 7.7l2.8-2.8"></path><circle cx="12" cy="12" r="4"></circle></svg></span>
+          个人材料工作区
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 8h8"></path><path d="M8 12h5"></path></svg></span>
+          我的草稿
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 8v5l3 2"></path><circle cx="12" cy="12" r="9"></circle></svg></span>
+          最近生成
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 11l2 2 4-4"></path><path d="M4 4h16v16H4z"></path></svg></span>
+          待我审核
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 7h16"></path><path d="M6 7v13h12V7"></path><path d="M9 11h6"></path></svg></span>
+          已归档
+        </div>
+      </div>
+
+      <div class="draft-card">
+        <strong>本周材料进度</strong>
+        <div class="mini-progress"><span></span></div>
+        <p class="hint">已完成 8 份，待编辑 4 份</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="view view-material active" data-view="material">
+      <section class="page-header">
+        <div>
+          <div class="eyebrow">个人工作区 · AI 原生创作</div>
+          <h1>个人材料工作区</h1>
+          <p class="subtitle">在对话框里选择资料、选择模板，然后直接生成材料。历史任务沉淀在下方，其他配置先保持轻量。</p>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <div class="chat-panel">
+          <div class="session-bar">
+            <div class="session-title">
+              <strong>今天要生成什么材料？</strong>
+            </div>
+          </div>
+
+          <div class="composer">
+            <div class="composer-box">
+              <div class="composer-context">
+                <span class="chip cyan" id="sourceSummary">已选资料：项目资料、产品资料</span>
+                <span class="chip orange" id="templateSummary">模板：客户解决方案</span>
+              </div>
+              <textarea id="promptInput" aria-label="生成要求" placeholder="输入你的生成要求，或继续修改这份材料…"></textarea>
+              <div class="composer-actions">
+                <div class="tool-group">
+                  <div class="tool-menu">
+                    <button class="small-tool" type="button">选择资料</button>
+                    <div class="tool-popover">
+                      <h3>选择资料</h3>
+                      <p>从商机项目或产品材料库取材，可多选。</p>
+                      <div class="selector-options">
+                        <button class="source-choice active" type="button">某银行项目资料</button>
+                        <button class="source-choice active" type="button">数据治理平台资料</button>
+                        <button class="source-choice" type="button">银行行业案例</button>
+                        <button class="source-choice" type="button">ROI模板</button>
+                        <button class="source-choice" type="button">POC链接</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tool-menu">
+                    <button class="small-tool" type="button">选择模板</button>
+                    <div class="tool-popover">
+                      <h3>选择模板</h3>
+                      <p>24类材料作为模板体系。</p>
+                      <div class="template-strip" id="templateGrid">
+                        <button class="template-choice active" type="button">客户解决方案</button>
+                        <button class="template-choice" type="button">产品介绍PPT</button>
+                        <button class="template-choice" type="button">技术方案</button>
+                        <button class="template-choice" type="button">投标应答</button>
+                        <button class="template-choice" type="button">竞品对比</button>
+                        <button class="template-choice" type="button">FAQ话术</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button class="send" id="sendButton">生成</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <section class="history-panel" aria-label="历史任务">
+          <div class="history-head">
+            <strong>历史任务</strong>
+            <span>最近 4 条</span>
+          </div>
+          <div class="history-grid">
+            <article class="history-item">
+              <strong>某银行数据治理解决方案</strong>
+              <div class="history-meta">
+                <span class="chip cyan">客户解决方案</span>
+                <span class="chip">今天 14:20</span>
+              </div>
+            </article>
+            <article class="history-item">
+              <strong>AI知识库竞品对比材料</strong>
+              <div class="history-meta">
+                <span class="chip orange">竞品对比</span>
+                <span class="chip">昨天</span>
+              </div>
+            </article>
+            <article class="history-item">
+              <strong>制造集团AI质检汇报PPT</strong>
+              <div class="history-meta">
+                <span class="chip green">产品介绍PPT</span>
+                <span class="chip">06-26</span>
+              </div>
+            </article>
+            <article class="history-item">
+              <strong>安全合规平台投标应答</strong>
+              <div class="history-meta">
+                <span class="chip">投标应答</span>
+                <span class="chip">06-25</span>
+              </div>
+            </article>
+          </div>
+        </section>
+      </section>
+      </section>
+      <section class="view view-leads" data-view="leads">
+        <section class="page-header">
+          <div>
+            <div class="eyebrow">业务模块 · 线索发现</div>
+            <h1>线索发现</h1>
+            <p class="subtitle">按产品与 ICP 实时聚合市场信号，判断客户意图、紧迫度和切入建议，并一键转入商机项目。</p>
+          </div>
+        </section>
+
+        <section class="lead-workspace">
+          <div class="lead-input-bar">
+            <div class="lead-controls">
+              <span class="lead-label">输入层</span>
+              <span class="select-pill">产品：金融AI <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></svg></span>
+              <span class="select-pill">ICP：中大型银行 <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></svg></span>
+              <span class="select-pill">采集时间：实时 · 今日24条 <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></svg></span>
+            </div>
+            <button class="refresh-button" type="button">
+              <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-15.4 6.4"></path><path d="M3 12A9 9 0 0 1 18.4 5.6"></path><path d="M18 2v4h-4"></path><path d="M6 22v-4h4"></path></svg>
+              刷新信号
+            </button>
+          </div>
+
+          <div class="lead-grid">
+            <aside class="filter-panel">
+              <div class="filter-title">
+                <strong>筛选</strong>
+                <button class="reset-link" type="button">重置</button>
+              </div>
+
+              <div class="filter-block">
+                <h3>信号类型</h3>
+                <div class="check-row active"><span class="check-box">✓</span><span class="signal-color" style="background:#ef4444"></span>招投标</div>
+                <div class="check-row active"><span class="check-box">✓</span><span class="signal-color" style="background:#f97316"></span>战略变化</div>
+                <div class="check-row active"><span class="check-box">✓</span><span class="signal-color" style="background:#facc15"></span>组织变动</div>
+                <div class="check-row active"><span class="check-box">✓</span><span class="signal-color" style="background:#22c55e"></span>舆论媒体</div>
+                <div class="check-row active"><span class="check-box">✓</span><span class="signal-color" style="background:#3b82f6"></span>政策合规</div>
+                <div class="check-row active"><span class="check-box">✓</span><span class="signal-color" style="background:#a855f7"></span>资本动态</div>
+              </div>
+
+              <div class="filter-block">
+                <h3>行业</h3>
+                <div class="check-row active"><span class="check-box">✓</span>金融</div>
+                <div class="check-row"><span class="check-box"></span>政务</div>
+                <div class="check-row"><span class="check-box"></span>制造</div>
+              </div>
+
+              <div class="filter-block">
+                <h3>紧迫度</h3>
+                <div class="radio-row active"><span class="radio-dot"></span>全部</div>
+                <div class="radio-row"><span class="radio-dot"></span>7天内</div>
+                <div class="radio-row"><span class="radio-dot"></span>紧急</div>
+              </div>
+
+              <div class="filter-block">
+                <h3>评分</h3>
+                <div class="score-slider">
+                  <div class="slider-track"></div>
+                  <span>≥70</span>
+                </div>
+              </div>
+            </aside>
+
+            <section class="signal-panel">
+              <div class="signal-title">
+                <strong>信号流（按客户聚合）</strong>
+                <button class="sort-link" type="button">最新 <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></svg></button>
+              </div>
+
+              <article class="signal-card selected">
+                <div class="signal-head">
+                  <div class="company-logo">M</div>
+                  <div>
+                    <strong>招商银行</strong>
+                    <div class="stars">★★★★★</div>
+                  </div>
+                  <div class="signal-time">2小时前 <span class="intent-tag">高意图</span></div>
+                </div>
+                <div class="signal-lines">
+                  <div class="signal-line"><span class="signal-label red">招标</span><span>智能风控平台采购</span><span>截止7天</span></div>
+                  <div class="signal-line"><span class="signal-label orange">招聘</span><span>高级AI架构师 · 3个在招</span><span></span></div>
+                  <div class="signal-line"><span class="signal-label yellow">战略</span><span>年报披露“全面AI化”</span><span></span></div>
+                </div>
+                <div class="signal-footer">
+                  <span>综合意图：<span class="score">92分</span></span>
+                  <span>紧迫度：<span class="urgent">高</span></span>
+                  <span>查看全部 5 个信号 ›</span>
+                </div>
+              </article>
+
+              <article class="signal-card">
+                <div class="signal-head">
+                  <div class="company-logo industry">△</div>
+                  <div>
+                    <strong>三一重工</strong>
+                    <div class="stars">★★★★☆</div>
+                  </div>
+                  <div class="signal-time">5小时前 <span class="intent-tag" style="background:#fff0dc;color:#b95f08">中高意图</span></div>
+                </div>
+                <div class="signal-lines">
+                  <div class="signal-line"><span class="signal-label purple">资本</span><span>C+轮融资 12亿</span><span></span></div>
+                  <div class="signal-line"><span class="signal-label orange">战略</span><span>数字化转型新闻发布会</span><span></span></div>
+                </div>
+                <div class="signal-footer">
+                  <span>综合意图：<span class="score">78分</span></span>
+                  <span>紧迫度：<span class="medium">中高</span></span>
+                  <span>查看全部 3 个信号 ›</span>
+                </div>
+              </article>
+
+              <article class="signal-card">
+                <div class="signal-head">
+                  <div class="company-logo cloud">☁</div>
+                  <div>
+                    <strong>某省政务云</strong>
+                    <div class="stars">★★★★☆</div>
+                  </div>
+                  <div class="signal-time">1天前 <span class="intent-tag" style="background:#fff8db;color:#9a6f00">中意图</span></div>
+                </div>
+                <div class="signal-lines">
+                  <div class="signal-line"><span class="signal-label blue">政策</span><span>省政府发布“政务云升级”通知</span><span></span></div>
+                  <div class="signal-line"><span class="signal-label green">舆论</span><span>媒体报道：政务云扩容需求增长</span><span></span></div>
+                </div>
+                <div class="signal-footer">
+                  <span>综合意图：<span class="score">84分</span></span>
+                  <span>紧迫度：<span class="medium">中</span></span>
+                  <span>查看全部 4 个信号 ›</span>
+                </div>
+              </article>
+            </section>
+
+            <aside class="customer-panel">
+              <div class="customer-title">
+                <strong>客户详情</strong>
+                <div class="chips">
+                  <span class="chip">收藏</span>
+                  <span class="chip">更多</span>
+                </div>
+              </div>
+              <div class="customer-name">
+                <div class="company-logo">M</div>
+                <h2>招商银行</h2>
+                <span class="intent-tag">高意图</span>
+              </div>
+
+              <div class="metric-grid">
+                <div class="metric"><span>规模</span><strong>5万+</strong></div>
+                <div class="metric"><span>营收</span><strong>¥3500亿</strong></div>
+                <div class="metric"><span>技术栈</span><strong>阿里云</strong></div>
+              </div>
+
+              <div class="filter-block">
+                <h3>信号时间线</h3>
+                <div class="timeline">
+                  <div class="timeline-row"><span>2h</span><span class="timeline-dot" style="background:#ef4444"></span><span><strong>招标公告</strong><br>智能风控平台采购</span></div>
+                  <div class="timeline-row"><span>1天</span><span class="timeline-dot" style="background:#f97316"></span><span><strong>招聘</strong><br>高级AI架构师等3个岗位</span></div>
+                  <div class="timeline-row"><span>5天</span><span class="timeline-dot" style="background:#eab308"></span><span><strong>战略</strong><br>年报披露“全面AI化”</span></div>
+                  <div class="timeline-row"><span>2周</span><span class="timeline-dot" style="background:#22c55e"></span><span><strong>高管访谈</strong><br>与CIO深入交流</span></div>
+                </div>
+              </div>
+
+              <div class="advice">
+                <h3>AI切入建议</h3>
+                <div class="advice-row"><span class="advice-key">Why now</span><span>智能风控采购在即，年报明确AI战略，组织扩编加速落地</span></div>
+                <div class="advice-row"><span class="advice-key">Who</span><span>CIO、风控负责人、信息科技部负责人</span></div>
+                <div class="advice-row"><span class="advice-key">What</span><span>智能风控解决方案 + 数据中台 + 模型平台一体化</span></div>
+              </div>
+
+              <div class="lead-actions">
+                <button class="button" type="button">生成跟进话术</button>
+                <button class="button primary" type="button">转入商机项目</button>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </section>
+
+      <section class="view view-opportunities" data-view="opportunities">
+        <section class="page-header">
+          <div>
+            <div class="eyebrow">业务模块 · 商机项目</div>
+            <h1>商机项目</h1>
+            <p class="subtitle">以商机为维度沉淀客户资料、推进动作和项目材料；多人协作拉项目，材料可从个人工作区发布沉淀进来。</p>
+          </div>
+          <div class="header-actions">
+            <button class="button" type="button">从线索转入</button>
+            <button class="button primary" type="button">新建商机项目</button>
+          </div>
+        </section>
+
+        <section class="opportunity-workspace">
+          <div class="opportunity-toolbar" aria-label="商机筛选">
+            <div class="opportunity-tabs">
+              <button class="opportunity-tab active" type="button">全部项目</button>
+              <button class="opportunity-tab" type="button">重点推进</button>
+              <button class="opportunity-tab" type="button">方案中</button>
+              <button class="opportunity-tab" type="button">投标中</button>
+              <button class="opportunity-tab" type="button">本周有动作</button>
+            </div>
+            <div class="opportunity-filters">
+              <span class="opportunity-filter">产品：全部</span>
+              <span class="opportunity-filter">负责人：我参与</span>
+              <span class="opportunity-filter">排序：最近更新</span>
+            </div>
+          </div>
+
+          <div class="opportunity-grid" aria-label="商机项目卡片">
+            <article class="opportunity-card hot">
+              <div class="opportunity-head">
+                <div class="opportunity-title">
+                  <h2>招商银行智能风控平台建设</h2>
+                  <p>客户：招商银行 · 金融AI / 数据智能</p>
+                </div>
+                <span class="stage-tag">方案定制</span>
+              </div>
+              <div class="project-meta">
+                <div><span>预计金额</span><strong>¥860万</strong></div>
+                <div><span>预计签约</span><strong>07-18</strong></div>
+                <div><span>负责人</span><strong>陈静</strong></div>
+              </div>
+              <div class="project-progress">
+                <div class="progress-top"><span>资料完整度</span><strong>82%</strong></div>
+                <div class="progress-line"><span style="width:82%"></span></div>
+              </div>
+              <div class="opportunity-footer">
+                <div class="team-stack" aria-label="协作成员">
+                  <span class="team-avatar">陈</span>
+                  <span class="team-avatar">周</span>
+                  <span class="team-avatar">王</span>
+                  <span class="team-avatar">+2</span>
+                </div>
+                <span class="latest-action">2小时前更新：补充客户痛点摘要</span>
+              </div>
+            </article>
+
+            <article class="opportunity-card">
+              <div class="opportunity-head">
+                <div class="opportunity-title">
+                  <h2>三一重工 AI 质检与知识库项目</h2>
+                  <p>客户：三一重工 · 制造行业 / 协同办公</p>
+                </div>
+                <span class="stage-tag orange">需求澄清</span>
+              </div>
+              <div class="project-meta">
+                <div><span>预计金额</span><strong>¥420万</strong></div>
+                <div><span>预计签约</span><strong>08-02</strong></div>
+                <div><span>负责人</span><strong>刘洋</strong></div>
+              </div>
+              <div class="project-progress">
+                <div class="progress-top"><span>资料完整度</span><strong>64%</strong></div>
+                <div class="progress-line"><span style="width:64%"></span></div>
+              </div>
+              <div class="opportunity-footer">
+                <div class="team-stack" aria-label="协作成员">
+                  <span class="team-avatar">刘</span>
+                  <span class="team-avatar">李</span>
+                  <span class="team-avatar">赵</span>
+                </div>
+                <span class="latest-action">今天 10:20 更新：上传访谈纪要</span>
+              </div>
+            </article>
+
+            <article class="opportunity-card">
+              <div class="opportunity-head">
+                <div class="opportunity-title">
+                  <h2>某省政务云数据治理升级</h2>
+                  <p>客户：某省政务云 · 政务行业 / 数据智能</p>
+                </div>
+                <span class="stage-tag blue">投标准备</span>
+              </div>
+              <div class="project-meta">
+                <div><span>预计金额</span><strong>¥1200万</strong></div>
+                <div><span>预计签约</span><strong>07-30</strong></div>
+                <div><span>负责人</span><strong>周明</strong></div>
+              </div>
+              <div class="project-progress">
+                <div class="progress-top"><span>资料完整度</span><strong>76%</strong></div>
+                <div class="progress-line"><span style="width:76%"></span></div>
+              </div>
+              <div class="opportunity-footer">
+                <div class="team-stack" aria-label="协作成员">
+                  <span class="team-avatar">周</span>
+                  <span class="team-avatar">宋</span>
+                  <span class="team-avatar">黄</span>
+                  <span class="team-avatar">+1</span>
+                </div>
+                <span class="latest-action">昨天更新：关联数据治理产品材料</span>
+              </div>
+            </article>
+
+            <article class="opportunity-card">
+              <div class="opportunity-head">
+                <div class="opportunity-title">
+                  <h2>华东城商行客户画像平台</h2>
+                  <p>客户：华东城商行 · 金融AI / 数据智能</p>
+                </div>
+                <span class="stage-tag">方案定制</span>
+              </div>
+              <div class="project-meta">
+                <div><span>预计金额</span><strong>¥530万</strong></div>
+                <div><span>预计签约</span><strong>08-12</strong></div>
+                <div><span>负责人</span><strong>王楠</strong></div>
+              </div>
+              <div class="project-progress">
+                <div class="progress-top"><span>资料完整度</span><strong>58%</strong></div>
+                <div class="progress-line"><span style="width:58%"></span></div>
+              </div>
+              <div class="opportunity-footer">
+                <div class="team-stack" aria-label="协作成员">
+                  <span class="team-avatar">王</span>
+                  <span class="team-avatar">陈</span>
+                  <span class="team-avatar">何</span>
+                </div>
+                <span class="latest-action">06-27 更新：生成方案初稿</span>
+              </div>
+            </article>
+
+            <article class="opportunity-card">
+              <div class="opportunity-head">
+                <div class="opportunity-title">
+                  <h2>制造集团低代码流程平台试点</h2>
+                  <p>客户：制造集团 · 制造行业 / 研发效能</p>
+                </div>
+                <span class="stage-tag orange">POC推进</span>
+              </div>
+              <div class="project-meta">
+                <div><span>预计金额</span><strong>¥300万</strong></div>
+                <div><span>预计签约</span><strong>08-25</strong></div>
+                <div><span>负责人</span><strong>赵晨</strong></div>
+              </div>
+              <div class="project-progress">
+                <div class="progress-top"><span>资料完整度</span><strong>69%</strong></div>
+                <div class="progress-line"><span style="width:69%"></span></div>
+              </div>
+              <div class="opportunity-footer">
+                <div class="team-stack" aria-label="协作成员">
+                  <span class="team-avatar">赵</span>
+                  <span class="team-avatar">谢</span>
+                  <span class="team-avatar">孙</span>
+                </div>
+                <span class="latest-action">06-26 更新：记录 POC 反馈</span>
+              </div>
+            </article>
+
+            <article class="opportunity-card">
+              <div class="opportunity-head">
+                <div class="opportunity-title">
+                  <h2>安全合规平台年度采购</h2>
+                  <p>客户：某证券公司 · 安全合规 / 金融AI</p>
+                </div>
+                <span class="stage-tag blue">投标准备</span>
+              </div>
+              <div class="project-meta">
+                <div><span>预计金额</span><strong>¥680万</strong></div>
+                <div><span>预计签约</span><strong>07-25</strong></div>
+                <div><span>负责人</span><strong>何峰</strong></div>
+              </div>
+              <div class="project-progress">
+                <div class="progress-top"><span>资料完整度</span><strong>88%</strong></div>
+                <div class="progress-line"><span style="width:88%"></span></div>
+              </div>
+              <div class="opportunity-footer">
+                <div class="team-stack" aria-label="协作成员">
+                  <span class="team-avatar">何</span>
+                  <span class="team-avatar">吴</span>
+                  <span class="team-avatar">钱</span>
+                  <span class="team-avatar">+3</span>
+                </div>
+                <span class="latest-action">06-25 更新：补充投标资质文件</span>
+              </div>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <section class="view view-project-detail" data-view="project-detail">
+        <section class="project-detail-header">
+          <div class="detail-nav-row">
+            <button class="back-button" id="projectBackButton" type="button">
+              <svg viewBox="0 0 24 24"><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg>
+              返回商机项目
+            </button>
+            <div class="detail-actions">
+              <button class="button" type="button">邀请成员</button>
+              <button class="button" type="button">项目设置</button>
+              <div class="more-menu">
+                <button class="button" type="button">更多</button>
+                <div class="more-popover">
+                  <button type="button">归档项目</button>
+                  <button class="danger" type="button">删除项目</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-title-row">
+            <div>
+              <div class="project-identity">
+                <h1>招商银行智能风控平台建设</h1>
+                <span class="stage-tag">方案阶段</span>
+                <span class="customer-name-pill">招商银行</span>
+              </div>
+              <div class="project-submeta">
+                <span>商机金额 <strong>¥860万</strong></span>
+                <span>预计成交 <strong>2026-07-18</strong></span>
+                <span>客户行业 / 地区 <strong>金融 / 深圳</strong></span>
+                <span>创建时间 <strong>2026-06-12</strong></span>
+                <span>最后更新 <strong>今天 14:20</strong></span>
+              </div>
+            </div>
+            <div class="project-owner" aria-label="负责人和项目成员">
+              <span class="detail-kicker">负责人</span>
+              <span class="owner-avatar">陈</span>
+              <div class="team-stack">
+                <span class="team-avatar">周</span>
+                <span class="team-avatar">王</span>
+                <span class="team-avatar">李</span>
+                <span class="team-avatar">+2</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="project-detail-body">
+          <aside class="project-side" aria-label="项目详情导航">
+            <div class="project-side-title">项目详情</div>
+            <div class="project-side-item">
+              <svg viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 0 1 2-2h8l6 6v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"></path><path d="M14 3v6h6"></path></svg>
+              客户上下文
+            </div>
+            <div class="project-side-item active">
+              <svg viewBox="0 0 24 24"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h10"></path></svg>
+              项目产出物
+            </div>
+            <div class="project-side-item">
+              <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.1 0l2.1-2.1a5 5 0 0 0-7.1-7.1L11 4.9"></path><path d="M14 11a5 5 0 0 0-7.1 0l-2.1 2.1a5 5 0 0 0 7.1 7.1L13 19.1"></path></svg>
+              引用资料
+            </div>
+          </aside>
+
+          <section class="project-main" aria-label="项目产出物">
+            <div class="outputs-header">
+              <div class="outputs-title-row">
+                <div>
+                  <h2>项目产出物</h2>
+                  <p>这个商机产生的所有材料，作为项目成果区集中沉淀。</p>
+                </div>
+                <div class="outputs-tools">
+                  <button class="button primary" id="createProjectMaterial" type="button">新建材料</button>
+                  <button class="button" type="button">从工作区导入</button>
+                </div>
+              </div>
+              <div class="outputs-title-row">
+                <input class="output-search" type="search" placeholder="搜索文件名、编辑者或状态" aria-label="搜索项目产出物">
+                <div class="output-filters">
+                  <span class="output-filter">类型：全部</span>
+                  <span class="output-filter">状态：全部</span>
+                  <span class="output-filter">编辑者：全部</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="outputs-content">
+              <section class="material-group">
+                <div class="material-group-head">
+                  <strong>24类标准材料</strong>
+                  <span class="material-count">3</span>
+                </div>
+                <div class="material-list">
+                  <article class="material-row">
+                    <div class="file-type">PPT</div>
+                    <div class="material-name">
+                      <strong>公司介绍V2.pptx</strong>
+                      <span>最后编辑：张三 · 2天前</span>
+                    </div>
+                    <span class="status-tag done">已定稿</span>
+                    <div class="material-actions">
+                      <button type="button">打开编辑</button>
+                      <button type="button">预览</button>
+                      <button type="button">下载</button>
+                      <button type="button">回流资料库</button>
+                    </div>
+                  </article>
+                  <article class="material-row">
+                    <div class="file-type doc">DOC</div>
+                    <div class="material-name">
+                      <strong>产品白皮书.docx</strong>
+                      <span>最后编辑：李四 · 今天</span>
+                    </div>
+                    <span class="status-tag">草稿</span>
+                    <div class="material-actions">
+                      <button type="button">打开编辑</button>
+                      <button type="button">预览</button>
+                      <button type="button">下载</button>
+                      <button type="button">回流资料库</button>
+                    </div>
+                  </article>
+                  <article class="material-row">
+                    <div class="file-type sheet">XLS</div>
+                    <div class="material-name">
+                      <strong>报价单.xlsx</strong>
+                      <span>最后编辑：王五 · 1小时前</span>
+                    </div>
+                    <span class="status-tag review">评审中</span>
+                    <div class="material-actions">
+                      <button type="button">打开编辑</button>
+                      <button type="button">预览</button>
+                      <button type="button">下载</button>
+                      <button type="button">回流资料库</button>
+                    </div>
+                  </article>
+                </div>
+              </section>
+
+              <section class="material-group">
+                <div class="material-group-head">
+                  <strong>定制方案</strong>
+                  <span class="material-count">2</span>
+                </div>
+                <div class="material-list">
+                  <article class="material-row">
+                    <div class="file-type doc">DOC</div>
+                    <div class="material-name">
+                      <strong>招商银行客户技术方案.docx</strong>
+                      <span>最后编辑：张三 · 今天</span>
+                    </div>
+                    <span class="status-tag">草稿</span>
+                    <div class="material-actions">
+                      <button type="button">打开编辑</button>
+                      <button type="button">预览</button>
+                      <button type="button">下载</button>
+                      <button type="button">回流资料库</button>
+                    </div>
+                  </article>
+                  <article class="material-row">
+                    <div class="file-type doc">DOC</div>
+                    <div class="material-name">
+                      <strong>POC实施方案.docx</strong>
+                      <span>最后编辑：李四 · 昨天</span>
+                    </div>
+                    <span class="status-tag done">已定稿</span>
+                    <div class="material-actions">
+                      <button type="button">打开编辑</button>
+                      <button type="button">预览</button>
+                      <button type="button">下载</button>
+                      <button type="button">回流资料库</button>
+                    </div>
+                  </article>
+                </div>
+              </section>
+
+              <section class="material-group">
+                <div class="material-group-head">
+                  <strong>投标材料</strong>
+                  <span class="material-count">0</span>
+                </div>
+                <div class="empty-material">
+                  <span>暂无投标材料</span>
+                  <button class="button" type="button">新建投标材料</button>
+                </div>
+              </section>
+            </div>
+          </section>
+        </section>
+      </section>
+
+      <section class="view view-library" data-view="library">
+        <section class="page-header">
+          <div>
+            <div class="eyebrow">业务模块 · 产品材料库</div>
+            <div class="title-with-help">
+              <h1>产品材料库</h1>
+              <span class="help-tip" tabindex="0" aria-label="产品材料库说明">?
+                <span class="help-tooltip">产品资料库为公司共享的标准资料集合，所有内容由材料中心沉淀与维护，个人编辑与创建请前往「个人材料工作区」。</span>
+              </span>
+            </div>
+            <p class="subtitle">公司共享的标准产品资料集合，所有人可查看；24类文档、POC演示、案例与投标材料由材料中心统一沉淀和维护。</p>
+          </div>
+        </section>
+
+        <section class="library-workspace">
+          <div class="library-tabs" aria-label="产品分类">
+            <button class="library-tab" type="button">全部</button>
+            <button class="library-tab active" type="button">金融AI</button>
+            <button class="library-tab" type="button">数据智能</button>
+            <button class="library-tab" type="button">安全合规</button>
+            <button class="library-tab" type="button">协同办公</button>
+            <button class="library-tab" type="button">研发效能</button>
+            <button class="library-tab" type="button">营销增长</button>
+            <button class="library-tab" type="button">政务行业</button>
+            <button class="library-tab" type="button">制造行业</button>
+          </div>
+
+          <div class="library-stats" aria-label="资料状态">
+            <span class="stat-chip active">全部产品 <span class="stat-count">12</span></span>
+            <span class="stat-chip">24类文档已齐备 <span class="stat-count">9</span></span>
+            <span class="stat-chip">有POC演示 <span class="stat-count">12</span></span>
+            <span class="stat-chip">本月更新 <span class="stat-count">6</span></span>
+            <span class="stat-chip">可用于投标 <span class="stat-count">10</span></span>
+          </div>
+
+          <div class="product-grid" aria-label="产品资料卡片">
+            <article class="product-card">
+              <div class="product-head">
+                <div class="product-icon">盾</div>
+                <div class="product-title">
+                  <h2>智能风控平台</h2>
+                  <p>面向银行与金融机构的智能风控解决方案，覆盖贷前、贷中、贷后全流程风控场景。</p>
+                </div>
+                <span class="category-tag">金融AI</span>
+              </div>
+              <div class="product-footer"><span>最近更新：2026.06</span><span>全员可见</span><span class="ready-tag">已齐备</span></div>
+            </article>
+
+            <article class="product-card">
+              <div class="product-head">
+                <div class="product-icon purple">知</div>
+                <div class="product-title">
+                  <h2>企业知识库 Copilot</h2>
+                  <p>基于大模型的企业知识助手，打通知识检索、问答与生成，提升员工知识使用效率。</p>
+                </div>
+                <span class="category-tag">协同办公</span>
+              </div>
+              <div class="product-footer"><span>最近更新：2026.06</span><span>全员可见</span><span class="ready-tag">已齐备</span></div>
+            </article>
+
+            <article class="product-card">
+              <div class="product-head">
+                <div class="product-icon teal">客</div>
+                <div class="product-title">
+                  <h2>AI客服助手</h2>
+                  <p>智能对话与工单处理一体化，7x24小时服务客户，提升服务效率与满意度。</p>
+                </div>
+                <span class="category-tag green">营销增长</span>
+              </div>
+              <div class="product-footer"><span>最近更新：2026.06</span><span>全员可见</span><span class="ready-tag">已齐备</span></div>
+            </article>
+
+            <article class="product-card">
+              <div class="product-head">
+                <div class="product-icon">数</div>
+                <div class="product-title">
+                  <h2>数据治理平台</h2>
+                  <p>企业级数据治理与资产管理平台，帮助企业构建高质量、可信赖的数据体系。</p>
+                </div>
+                <span class="category-tag">数据智能</span>
+              </div>
+              <div class="product-footer"><span>最近更新：2026.06</span><span>全员可见</span><span class="ready-tag">已齐备</span></div>
+            </article>
+
+            <article class="product-card">
+              <div class="product-head">
+                <div class="product-icon teal">OCR</div>
+                <div class="product-title">
+                  <h2>OCR识别服务</h2>
+                  <p>高精度多场景文字识别服务，支持票据、证件、合同等多类型文档结构化识别。</p>
+                </div>
+                <span class="category-tag">通用平台</span>
+              </div>
+              <div class="product-footer"><span>最近更新：2026.06</span><span>全员可见</span><span class="ready-tag">已齐备</span></div>
+            </article>
+
+            <article class="product-card">
+              <div class="product-head">
+                <div class="product-icon orange">线</div>
+                <div class="product-title">
+                  <h2>营销线索引擎</h2>
+                  <p>多渠道线索采集与智能评分引擎，助力企业精准获客与线索培育转化。</p>
+                </div>
+                <span class="category-tag orange">营销增长</span>
+              </div>
+              <div class="product-footer"><span>最近更新：2026.06</span><span>全员可见</span><span class="ready-tag">已齐备</span></div>
+            </article>
+
+            <article class="product-card">
+              <div class="product-head">
+                <div class="product-icon">审</div>
+                <div class="product-title">
+                  <h2>合规审计平台</h2>
+                  <p>覆盖合规管理、风险审计与内控监测，帮助企业满足监管要求，降低合规风险。</p>
+                </div>
+                <span class="category-tag">安全合规</span>
+              </div>
+              <div class="product-footer"><span>最近更新：2026.06</span><span>全员可见</span><span class="ready-tag">已齐备</span></div>
+            </article>
+
+            <article class="product-card">
+              <div class="product-head">
+                <div class="product-icon purple">流</div>
+                <div class="product-title">
+                  <h2>低代码流程平台</h2>
+                  <p>可视化流程设计与快速构建，业务人员也能轻松搭建企业应用与流程。</p>
+                </div>
+                <span class="category-tag">研发效能</span>
+              </div>
+              <div class="product-footer"><span>最近更新：2026.06</span><span>全员可见</span><span class="todo-tag">待补充</span></div>
+            </article>
+
+            <article class="product-card">
+              <div class="product-head">
+                <div class="product-icon">投</div>
+                <div class="product-title">
+                  <h2>智能投标助手</h2>
+                  <p>基于大模型的投标文档生成与优化助手，提升投标效率与文档质量。</p>
+                </div>
+                <span class="category-tag">研发效能</span>
+              </div>
+              <div class="product-footer"><span>最近更新：2026.06</span><span>全员可见</span><span class="todo-tag">待补充</span></div>
+            </article>
+
+            <article class="product-card">
+              <div class="product-head">
+                <div class="product-icon purple">模</div>
+                <div class="product-title">
+                  <h2>大模型应用平台</h2>
+                  <p>企业级大模型应用开发与运行平台，支持模型接入、编排、评测与安全管控。</p>
+                </div>
+                <span class="category-tag">通用平台</span>
+              </div>
+              <div class="product-footer"><span>最近更新：2026.06</span><span>全员可见</span><span class="ready-tag">已齐备</span></div>
+            </article>
+
+            <article class="product-card">
+              <div class="product-head">
+                <div class="product-icon teal">像</div>
+                <div class="product-title">
+                  <h2>客户画像平台</h2>
+                  <p>整合多源数据构建360度客户画像，助力精细化运营与精准营销。</p>
+                </div>
+                <span class="category-tag">数据智能</span>
+              </div>
+              <div class="product-footer"><span>最近更新：2026.06</span><span>全员可见</span><span class="ready-tag">已齐备</span></div>
+            </article>
+
+            <article class="product-card">
+              <div class="product-head">
+                <div class="product-icon orange">话</div>
+                <div class="product-title">
+                  <h2>销售话术助手</h2>
+                  <p>智能话术生成与建议，沉淀最佳实践，提升销售沟通效率与成交转化率。</p>
+                </div>
+                <span class="category-tag orange">营销增长</span>
+              </div>
+              <div class="product-footer"><span>最近更新：2026.06</span><span>全员可见</span><span class="todo-tag">待补充</span></div>
+            </article>
+          </div>
+
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const navTargets = document.querySelectorAll("[data-view-target]");
+    const views = document.querySelectorAll(".view");
+    const templateOptions = document.querySelectorAll(".template-choice");
+    const sourceChoices = document.querySelectorAll(".source-choice");
+    const filterRows = document.querySelectorAll(".check-row, .radio-row");
+    const signalCards = document.querySelectorAll(".signal-card");
+    const opportunityTabs = document.querySelectorAll(".opportunity-tab");
+    const opportunityCards = document.querySelectorAll(".opportunity-card");
+    const libraryTabs = document.querySelectorAll(".library-tab");
+    const projectBackButton = document.getElementById("projectBackButton");
+    const createProjectMaterial = document.getElementById("createProjectMaterial");
+    const sendButton = document.getElementById("sendButton");
+    const promptInput = document.getElementById("promptInput");
+    const historyGrid = document.querySelector(".history-grid");
+    const sourceSummary = document.getElementById("sourceSummary");
+    const templateSummary = document.getElementById("templateSummary");
+
+    const updateSourceSummary = () => {
+      const selected = Array.from(sourceChoices)
+        .filter((button) => button.classList.contains("active"))
+        .map((button) => button.textContent.trim());
+      sourceSummary.textContent = selected.length ? `已选资料：${selected.join("、")}` : "未选择资料";
+    };
+
+    const activateView = (viewName, navName = viewName) => {
+      navTargets.forEach((nav) => {
+        nav.classList.toggle("active", nav.dataset.viewTarget === navName);
+      });
+      views.forEach((view) => {
+        view.classList.toggle("active", view.dataset.view === viewName);
+      });
+    };
+
+    navTargets.forEach((item) => {
+      item.addEventListener("click", () => {
+        activateView(item.dataset.viewTarget);
+      });
+    });
+
+    templateOptions.forEach((option) => {
+      option.addEventListener("click", () => {
+        templateOptions.forEach((item) => item.classList.remove("active"));
+        option.classList.add("active");
+        templateSummary.textContent = `模板：${option.textContent.trim()}`;
+      });
+    });
+
+    sourceChoices.forEach((button) => {
+      button.addEventListener("click", () => {
+        button.classList.toggle("active");
+        updateSourceSummary();
+      });
+    });
+
+    filterRows.forEach((row) => {
+      row.addEventListener("click", () => row.classList.toggle("active"));
+    });
+
+    signalCards.forEach((card) => {
+      card.addEventListener("click", () => {
+        signalCards.forEach((item) => item.classList.remove("selected"));
+        card.classList.add("selected");
+      });
+    });
+
+    opportunityTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        opportunityTabs.forEach((item) => item.classList.remove("active"));
+        tab.classList.add("active");
+      });
+    });
+
+    opportunityCards.forEach((card) => {
+      card.addEventListener("click", () => activateView("project-detail", "opportunities"));
+    });
+
+    projectBackButton.addEventListener("click", () => activateView("opportunities"));
+
+    createProjectMaterial.addEventListener("click", () => activateView("material"));
+
+    libraryTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        libraryTabs.forEach((item) => item.classList.remove("active"));
+        tab.classList.add("active");
+      });
+    });
+
+    sendButton.addEventListener("click", () => {
+      const text = promptInput.value.trim();
+      const template = document.querySelector(".template-choice.active")?.textContent.trim() || "材料生成";
+      const item = document.createElement("article");
+      item.className = "history-item";
+      item.innerHTML = `
+        <strong>${text || `${template}生成任务`}</strong>
+        <div class="history-meta">
+          <span class="chip cyan">${template}</span>
+          <span class="chip">刚刚</span>
+        </div>
+      `;
+      historyGrid.prepend(item);
+      promptInput.value = "";
+    });
+
+    updateSourceSummary();
+  </script>
+</body>
+</html>
