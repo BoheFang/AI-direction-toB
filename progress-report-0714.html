@@ -1,0 +1,2075 @@
+<!doctype html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GTM Copilot · 项目进度汇报 7.14</title>
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  /* ── 报告专用排版 ─────────────────────────────────────────
+   * 与产品界面区分:更严谨的段落节奏、更克制的装饰、
+   * 首屏"结论先行"。所有色号引用 :root tokens。
+   * ────────────────────────────────────────────────── */
+  body.report { min-height: 100vh; padding: 0; }
+  .report-page {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 64px 40px 120px;
+  }
+  @media (max-width: 720px) {
+    .report-page { padding: 40px 20px 80px; }
+  }
+
+  /* ── 封面 / 结论先行 ────────────────────────────── */
+  .cover {
+    display: grid;
+    gap: 28px;
+    padding-bottom: 56px;
+    border-bottom: 1px solid var(--border-ink);
+    margin-bottom: 56px;
+  }
+  .cover-kicker {
+    display: flex; align-items: center; gap: 12px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--meta);
+  }
+  .cover-kicker .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+  .cover h1 {
+    font-family: var(--font-display);
+    font-size: clamp(38px, 5.6vw, 56px);
+    font-weight: 700;
+    letter-spacing: -0.028em;
+    line-height: 1.05;
+    color: var(--fg);
+    margin: 0;
+    max-width: 20ch;
+  }
+  .cover .subtitle {
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--fg-2);
+    max-width: 62ch;
+    margin: 0;
+  }
+  .cover .subtitle b { color: var(--fg); font-weight: 600; }
+  .cover-meta {
+    display: flex; flex-wrap: wrap; gap: 28px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--muted);
+    padding-top: 8px;
+  }
+  .cover-meta span b { color: var(--fg); font-weight: 600; }
+
+  /* ── TL;DR 三块 ─────────────────────────── */
+  .tldr {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 8px;
+  }
+  @media (max-width: 720px) {
+    .tldr { grid-template-columns: 1fr; }
+  }
+  .tldr-card {
+    background: var(--surface);
+    -webkit-backdrop-filter: blur(22px);
+    backdrop-filter: blur(22px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: 0 12px 40px rgba(79, 140, 255, 0.10);
+    padding: 22px 22px 24px;
+    display: grid;
+    gap: 10px;
+    align-content: start;
+  }
+  .tldr-card .label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--meta);
+  }
+  .tldr-card .headline {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--fg);
+    letter-spacing: -0.01em;
+  }
+  .tldr-card .body {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--fg-2);
+  }
+  .tldr-card.accent {
+    background: linear-gradient(155deg, rgba(79, 140, 255, 0.10), rgba(123, 92, 255, 0.08));
+    border-color: rgba(79, 140, 255, 0.28);
+  }
+  .tldr-card.accent .label { color: var(--accent); }
+
+  /* ── 章节 ─────────────────────────── */
+  section.chapter {
+    margin-top: 72px;
+    scroll-margin-top: 24px;
+  }
+  section.chapter:first-of-type { margin-top: 48px; }
+
+  .chapter-head {
+    display: grid; gap: 8px;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-ink);
+  }
+  .chapter-head .n {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--meta);
+  }
+  .chapter-head h2 {
+    font-family: var(--font-display);
+    font-size: clamp(24px, 3vw, 30px);
+    font-weight: 700;
+    letter-spacing: -0.018em;
+    color: var(--fg);
+    margin: 0;
+    line-height: 1.2;
+  }
+  .chapter-head .lede {
+    font-size: 16px;
+    color: var(--fg-2);
+    line-height: 1.55;
+    margin: 4px 0 0;
+    max-width: 66ch;
+  }
+
+  /* ── 正文段落 ─────────────────────────── */
+  .prose { font-size: 16px; line-height: 1.65; color: var(--fg-2); }
+  .prose p { margin: 0 0 14px; }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose b, .prose strong { color: var(--fg); font-weight: 600; }
+  .prose ul { margin: 8px 0 14px; padding-left: 22px; }
+  .prose li { margin: 4px 0; }
+
+  /* ── 引用/结论条 ─────────────────── */
+  .callout {
+    border-left: 3px solid var(--accent);
+    padding: 4px 0 4px 18px;
+    margin: 20px 0;
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--fg);
+  }
+  .callout .tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--meta);
+    margin-bottom: 4px;
+  }
+
+  /* ── §1 4-模块拓扑 ─────────────────── */
+  .topo {
+    display: grid;
+    gap: 12px;
+    margin: 20px 0 8px;
+  }
+  .topo-title {
+    background: linear-gradient(155deg, rgba(79, 140, 255, 0.12), rgba(123, 92, 255, 0.08));
+    border: 1px solid rgba(79, 140, 255, 0.28);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-md);
+    padding: 16px 22px;
+    display: flex; align-items: center; gap: 14px;
+    font-size: 15px;
+  }
+  .topo-title b {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--fg);
+    letter-spacing: -0.01em;
+  }
+  .topo-title em {
+    font-style: normal;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    margin-left: auto;
+  }
+  .topo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 900px) { .topo-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .topo-grid { grid-template-columns: 1fr; } }
+  .topo-cell {
+    background: var(--surface);
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px 16px 18px;
+    display: grid;
+    gap: 6px;
+    align-content: start;
+  }
+  .topo-cell .name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--fg);
+    letter-spacing: -0.005em;
+  }
+  .topo-cell .desc {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .topo-cell .pill {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    color: var(--meta);
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .topo-cell.hero {
+    background: linear-gradient(155deg, rgba(79, 140, 255, 0.18), rgba(255, 255, 255, 0.72));
+    border-color: rgba(79, 140, 255, 0.34);
+  }
+  .topo-cell.hero .pill { color: var(--accent); font-weight: 600; }
+
+  /* ── §1 价值观 3 条 ────────────────── */
+  .principles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 20px 0 8px;
+  }
+  @media (max-width: 720px) { .principles { grid-template-columns: 1fr; } }
+  .principle {
+    background: var(--surface);
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px 20px 22px;
+  }
+  .principle .n {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+    font-weight: 600;
+  }
+  .principle .h {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--fg);
+    margin: 8px 0 6px;
+    line-height: 1.3;
+  }
+  .principle .d {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--fg-2);
+  }
+
+  /* ── §2 进展 ✅ ──────────────────── */
+  .status-strip {
+    background: linear-gradient(155deg, rgba(34, 197, 94, 0.10), var(--surface));
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(34, 197, 94, 0.30);
+    border-radius: var(--radius-md);
+    padding: 22px 26px;
+    display: grid; gap: 12px;
+    margin-top: 4px;
+  }
+  .status-strip .stamp {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--success);
+    font-weight: 600;
+  }
+  .status-strip .stamp .icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--success);
+    color: var(--fg-on);
+    font-size: 11px; font-weight: 700;
+  }
+  .status-strip h3 {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--fg);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .stack-list {
+    display: grid; gap: 6px;
+    font-size: 15px;
+    color: var(--fg-2);
+    line-height: 1.55;
+  }
+  .stack-list li { list-style: none; padding-left: 20px; position: relative; }
+  .stack-list li::before {
+    content: "▸";
+    position: absolute; left: 0;
+    color: var(--accent);
+    font-family: var(--font-mono);
+  }
+  .stack-list li b { color: var(--fg); font-weight: 600; }
+
+  /* ── §3 里程碑表 ─────────────────── */
+  .m-table {
+    border-collapse: collapse;
+    width: 100%;
+    background: var(--surface);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(79, 140, 255, 0.10);
+    border: 1px solid var(--border);
+    font-size: 14.5px;
+  }
+  .m-table thead th {
+    text-align: left;
+    padding: 14px 16px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.5);
+    border-bottom: 1px solid var(--border-ink);
+    white-space: nowrap;
+  }
+  .m-table tbody td {
+    padding: 18px 16px;
+    vertical-align: top;
+    color: var(--fg-2);
+    line-height: 1.5;
+    border-bottom: 1px solid var(--border-ink);
+  }
+  .m-table tbody tr:last-child td { border-bottom: none; }
+  .m-table .m-name {
+    color: var(--fg);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .m-table .m-time {
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    color: var(--meta);
+    white-space: nowrap;
+  }
+  .m-table .m-time.tbd {
+    color: var(--muted);
+  }
+  .m-table .m-out .no {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--muted);
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--neutral-soft);
+    border: 1px solid var(--border-ink);
+    letter-spacing: 0.03em;
+  }
+  .m-table .m-out .yes {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--fg-on);
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(120deg, var(--accent), var(--accent-2));
+    letter-spacing: 0.03em;
+    font-weight: 600;
+    box-shadow: 0 6px 18px rgba(79, 140, 255, 0.35);
+  }
+  .m-table tr.hero {
+    background: linear-gradient(90deg, rgba(79, 140, 255, 0.08), rgba(123, 92, 255, 0.05));
+  }
+  .m-table tr.hero .m-name { color: var(--accent); }
+
+  .m-why {
+    margin-top: 22px;
+    display: grid; gap: 10px;
+  }
+  .m-why .row {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border-ink);
+  }
+  .m-why .row:last-child { border-bottom: none; }
+  .m-why .k {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding-top: 2px;
+  }
+  .m-why .v { color: var(--fg-2); font-size: 15px; line-height: 1.6; }
+  .m-why .v b { color: var(--fg); font-weight: 600; }
+
+  /* ── §4 四步走 ─────────────────── */
+  .steps {
+    display: grid;
+    gap: 14px;
+    margin: 12px 0 4px;
+  }
+  .step {
+    background: var(--surface);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 22px 26px 24px;
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: 22px;
+    align-items: start;
+  }
+  @media (max-width: 720px) {
+    .step {
+      grid-template-columns: 44px 1fr;
+      padding: 20px;
+      gap: 14px;
+    }
+    .step .step-tag { grid-column: 1 / -1; justify-self: start; }
+  }
+  .step .step-n {
+    font-family: var(--font-mono);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .step .step-body { display: grid; gap: 10px; }
+  .step .step-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--fg);
+    letter-spacing: -0.01em;
+  }
+  .step .step-lede {
+    font-size: 15px;
+    color: var(--fg-2);
+    line-height: 1.55;
+  }
+  .step .step-body ul {
+    margin: 4px 0 0;
+    padding-left: 18px;
+    font-size: 14.5px;
+    color: var(--fg-2);
+    line-height: 1.6;
+  }
+  .step .step-body ul li { margin: 2px 0; }
+  .step .step-body ul li b { color: var(--fg); font-weight: 600; }
+  .step .step-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .step.hero {
+    background: linear-gradient(155deg, rgba(79, 140, 255, 0.10), rgba(123, 92, 255, 0.06));
+    border-color: rgba(79, 140, 255, 0.30);
+  }
+  .step.hero .step-tag {
+    background: linear-gradient(120deg, var(--accent), var(--accent-2));
+    color: var(--fg-on);
+    box-shadow: 0 6px 18px rgba(79, 140, 255, 0.35);
+  }
+
+  /* ── §5 逻辑 flow ───────────────── */
+  .flow-diagram {
+    display: grid; gap: 10px;
+    margin: 12px 0 4px;
+  }
+  .flow-node {
+    background: var(--surface);
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px 22px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .flow-node .idx {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    min-width: 32px;
+  }
+  .flow-node .txt {
+    font-size: 15px;
+    color: var(--fg);
+    font-weight: 600;
+    letter-spacing: -0.005em;
+  }
+  .flow-node .sub {
+    margin-left: auto;
+    font-size: 12.5px;
+    color: var(--fg-2);
+  }
+  .flow-arrow {
+    text-align: center;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 18px;
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+  .flow-node.final {
+    background: linear-gradient(155deg, rgba(79, 140, 255, 0.14), rgba(123, 92, 255, 0.08));
+    border-color: rgba(79, 140, 255, 0.32);
+  }
+  .flow-node.final .txt { color: var(--fg); }
+  .flow-node.final .sub {
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* ── §6 风险卡 ─────────────────── */
+  .risks {
+    display: grid;
+    gap: 14px;
+    margin-top: 4px;
+  }
+  .risk {
+    background: var(--surface);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 22px 24px 24px;
+    display: grid; gap: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .risk::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--warn);
+  }
+  .risk.blocker::before { background: var(--danger); }
+  .risk-head {
+    display: flex; align-items: center; gap: 14px;
+    flex-wrap: wrap;
+  }
+  .risk-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--warn-soft);
+    color: var(--warn);
+    font-weight: 600;
+  }
+  .risk.blocker .risk-tag {
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+  .risk-title {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--fg);
+    letter-spacing: -0.008em;
+    line-height: 1.3;
+  }
+  .risk-block {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-left: auto;
+  }
+  .risk-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--fg-2);
+  }
+  @media (max-width: 720px) { .risk-body { grid-template-columns: 1fr; gap: 12px; } }
+  .risk-body .kv {
+    display: grid; gap: 4px;
+  }
+  .risk-body .kv .k {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .risk-body .kv .v b { color: var(--fg); font-weight: 600; }
+  .risk-body-single {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--fg-2);
+  }
+  .risk-body-single b { color: var(--fg); font-weight: 600; }
+
+  /* ── §7 资源 & 交付物表 ───────── */
+  .ask-hero {
+    background: linear-gradient(155deg, rgba(79, 140, 255, 0.14), rgba(123, 92, 255, 0.08));
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(79, 140, 255, 0.32);
+    border-radius: var(--radius-md);
+    padding: 26px 28px;
+    display: grid; gap: 10px;
+    margin-bottom: 24px;
+  }
+  .ask-hero .lbl {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .ask-hero .headline {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--fg);
+    letter-spacing: -0.012em;
+    line-height: 1.35;
+  }
+  .why-list {
+    display: grid; gap: 8px;
+    font-size: 15px;
+    color: var(--fg-2);
+    line-height: 1.6;
+    margin: 4px 0 24px;
+    padding-left: 22px;
+  }
+  .why-list li { padding-left: 2px; }
+  .why-list li b { color: var(--fg); font-weight: 600; }
+
+  .deliv-title {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--fg);
+    margin: 24px 0 10px;
+    letter-spacing: -0.005em;
+  }
+  .deliv-table {
+    border-collapse: collapse;
+    width: 100%;
+    background: var(--surface);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    font-size: 14.5px;
+  }
+  .deliv-table thead th {
+    text-align: left;
+    padding: 14px 16px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.5);
+    border-bottom: 1px solid var(--border-ink);
+  }
+  .deliv-table tbody td {
+    padding: 16px;
+    vertical-align: top;
+    color: var(--fg-2);
+    line-height: 1.55;
+    border-bottom: 1px solid var(--border-ink);
+  }
+  .deliv-table tbody tr:last-child td { border-bottom: none; }
+  .deliv-table .t {
+    color: var(--fg);
+    font-weight: 600;
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+  }
+  .deliv-table .r {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--success);
+    background: var(--success-soft);
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* ── 页脚 ─────────────────────────── */
+  .foot {
+    margin-top: 96px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border-ink);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .foot a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--accent);
+  }
+
+  /* ── 目录 / TOC 顶部吸附导航 ─── */
+  .toc {
+    position: sticky;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 20px;
+    overflow-x: auto;
+    background: rgba(247, 246, 241, 0.94);
+    border-bottom: 1px solid var(--border-ink);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    z-index: 20;
+  }
+  .toc a {
+    display: flex; align-items: center;
+    flex: 0 0 auto;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: var(--radius-pill);
+    transition: color 180ms, background 180ms;
+  }
+  .toc a::before {
+    display: none;
+  }
+  .toc a:hover {
+    color: var(--accent);
+  }
+  @media (max-width: 720px) { .toc { justify-content: flex-start; } }
+
+  /* ═══════════════════════════════════════════════════════════════
+   * kami override — this block wins over everything above and over
+   * the shared styles.css. Rebinds tokens to kami's print-first
+   * palette (parchment / ink-blue / warm grays / serif @ 500) and
+   * neutralizes every Glassmorphism-specific posture (backdrop-blur,
+   * blue-glow shadow, chromatic gradients, weights > 500, italic).
+   * ═══════════════════════════════════════════════════════════════ */
+
+  :root, :root[lang="zh-CN"], :root[lang="zh"] {
+    /* Surface — parchment, ivory, warm sand. Never white. */
+    --bg: #f5f4ed;
+    --surface: #faf9f5;
+    --surface-warm: #e8e6dc;
+    --surface-2: #faf9f5;
+
+    /* Foreground — warm 4-level ramp, no cool grays. */
+    --fg: #141413;
+    --fg-2: #3d3d3a;
+    --muted: #504e49;
+    --meta: #6b6a64;
+    --fg-on: #faf9f5;
+
+    /* Border — warm, 2 levels. */
+    --border: #e8e6dc;
+    --border-soft: #e5e3d8;
+    --border-ink: #d8d5c8;
+
+    /* Accent — single ink-blue chromatic move (≤5% of surface). */
+    --accent: #1b365d;
+    --accent-2: #1b365d;              /* no second accent in kami */
+    --accent-on: #faf9f5;
+    --accent-light: #2d5a8a;
+    --accent-hover: #1b365d;
+    --accent-active: #142a48;
+    --accent-soft: #e4ecf5;           /* solid pre-blend, NOT rgba */
+
+    /* Semantic — desaturated warm hues, kami-appropriate. */
+    --success: #4a6b3a;
+    --success-soft: #eaefe1;
+    --warn: #8a6b1f;
+    --warn-soft: #efe8d1;
+    --danger: #8a3a30;
+    --danger-soft: #eddcd8;
+    --info: #1b365d;
+    --info-soft: #e4ecf5;
+
+    /* Typography — serif everywhere, one weight (500). Songti-first for zh. */
+    --font-display:
+      "TsangerJinKai02", "Source Han Serif SC", "Noto Serif CJK SC",
+      "Songti SC", "STSong", Charter, Georgia, serif;
+    --font-body:
+      "TsangerJinKai02", "Source Han Serif SC", "Noto Serif CJK SC",
+      "Songti SC", "STSong", Charter, Georgia, serif;
+    --font-mono:
+      "JetBrains Mono", "SF Mono", "Fira Code", Consolas, Monaco,
+      "Source Han Serif SC", monospace;
+
+    /* Radius — 2 → 4 → 8 (default) → 12 → 16. Print-restrained. */
+    --radius-xs: 2px;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-pill: 9999px;
+
+    /* Elevation — ring + whisper only. No hard drop shadows. */
+    --elev-flat: none;
+    --elev-ring: 0 0 0 1px var(--border);
+    --elev-ring-accent: 0 0 0 1px var(--accent);
+    --elev-raised: 0 4px 24px rgba(0, 0, 0, 0.05);
+
+    /* Focus. */
+    --focus-ring: 0 0 0 2px var(--accent-active);
+
+    /* Tag pre-blends over parchment (solid hex — print-fidelity). */
+    --tag-bg-faint: #eef2f7;
+    --tag-bg-soft: #e4ecf5;
+    --tag-bg-base: #d6e1ee;
+    --tag-bg-strong: #d0dce9;
+  }
+
+  /* ── Page frame ────────────────────────────────────────────── */
+  body.report {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: 0.15px;
+  }
+  body.report::before { content: none !important; display: none !important; }
+
+  /* ── Globally cap weight at 500 (kami rule). No italic. ─────── */
+  body.report, body.report * { font-style: normal !important; }
+  /* Nuclear weight cap — kami forbids weights above 500 on serif.
+   * Any element inside .report that had a heavier weight (from the
+   * pre-override style block) is pulled back to 500. Kicker/label
+   * elements set to 400 by their own rules keep that; this only caps
+   * from above. */
+  body.report [class] { font-weight: 500; }
+  body.report p, body.report li, body.report td,
+  body.report .prose, body.report .prose *,
+  body.report .body, body.report .desc, body.report .d,
+  body.report .lede, body.report .subtitle, body.report .sub,
+  body.report .risk-body, body.report .risk-body *,
+  body.report .m-why .v, body.report .stack-list li,
+  body.report .why-list li, body.report .step .step-lede,
+  body.report .flow-node .sub {
+    font-weight: 400;
+  }
+  body.report h1, body.report h2, body.report h3, body.report h4,
+  body.report h5, body.report h6,
+  body.report b, body.report strong,
+  body.report .cover-kicker, body.report .tldr-card .headline,
+  body.report .topo-cell h4, body.report .topo-cell .name,
+  body.report .principle h4, body.report .principle .h,
+  body.report .principle .n,
+  body.report .why-block h3, body.report .step .step-num,
+  body.report .step .step-n, body.report .step .step-title,
+  body.report .step .step-tag, body.report .step .step-lede b,
+  body.report .risk .risk-num, body.report .risk-card .risk-num,
+  body.report .risk .risk-title, body.report .risk-card .risk-title,
+  body.report .risk .risk-tag, body.report .risk-card .risk-tag,
+  body.report .risk .risk-block,
+  body.report .ask-hero h3, body.report .ask-hero .headline,
+  body.report .deliv-table th, body.report .deliv-title,
+  body.report .m-table th, body.report .m-why h3, body.report .m-why .v b,
+  body.report .m-table .m-current, body.report .m-table .m-release td,
+  body.report .m-table .m-out span,
+  body.report .prose b, body.report .stack-list li b,
+  body.report .risk-body b, body.report .risk-body .kv .v b,
+  body.report .risk-body-single b, body.report .why-list li b,
+  body.report .topo-title b, body.report .stamp,
+  body.report .status-strip h3, body.report .callout .tag,
+  body.report .m-pill, body.report .flow-node .txt {
+    font-weight: 500 !important;
+  }
+
+  /* ── Cover ─────────────────────────────────────────────────── */
+  .cover { border-bottom-color: var(--border-ink); }
+  .cover-kicker .dot {
+    background: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .cover h1 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+  .cover .subtitle { color: var(--fg-2); }
+  .cover .subtitle b { color: var(--fg); }
+  .cover-meta { color: var(--muted); }
+  .cover-meta span b { color: var(--fg); }
+
+  /* ── TL;DR cards ───────────────────────────────────────────── */
+  .tldr-card {
+    background: var(--surface) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    border: 1px solid var(--border);
+    box-shadow: var(--elev-raised);
+    border-radius: var(--radius-md);
+  }
+  .tldr-card .label { color: var(--meta); font-family: var(--font-mono); }
+  .tldr-card .headline {
+    color: var(--fg);
+    letter-spacing: -0.005em;
+    font-family: var(--font-display);
+    font-weight: 500 !important;
+  }
+  .tldr-card .body { color: var(--fg-2); }
+  .tldr-card .body b { color: var(--fg); }
+  .tldr-card.accent, .tldr-card.hero {
+    background: var(--surface) !important;
+    border-color: var(--border) !important;
+    box-shadow: var(--elev-ring-accent), var(--elev-raised);
+  }
+  .tldr-card.accent .headline,
+  .tldr-card.hero .headline { color: var(--accent); }
+
+  /* ── Chapter heads ─────────────────────────────────────────── */
+  .chapter-head { border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+  .chapter-head .n, .chapter-num {
+    color: var(--accent);
+    font-family: var(--font-display);
+    letter-spacing: 0.04em;
+    font-weight: 500 !important;
+  }
+  .chapter-head h2 {
+    font-family: var(--font-display);
+    color: var(--fg);
+    letter-spacing: 0;
+    line-height: 1.2;
+    font-weight: 500 !important;
+  }
+  .chapter-head .lede, .chapter-lede {
+    color: var(--fg-2);
+    font-family: var(--font-body);
+  }
+  .chapter-head .lede b, .chapter-lede b { color: var(--fg); }
+
+  /* ── Body prose ────────────────────────────────────────────── */
+  .prose { color: var(--fg-2); font-family: var(--font-body); line-height: 1.55; }
+  .prose b { color: var(--fg); }
+
+  /* ── Callouts / quotes — kami's left-rule quote pattern ────── */
+  .callout, .callout-quote, .why-block, .conclusion, .ask-hero {
+    background: var(--surface) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--accent) !important;
+    border-radius: var(--radius-md);
+    box-shadow: none;
+    color: var(--fg-2);
+    padding: 14px 18px;
+  }
+  .callout b, .why-block b, .conclusion b, .ask-hero b { color: var(--fg); }
+  .callout .tag, .why-block .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--radius-xs);
+    background: var(--tag-bg-soft);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.4px;
+    margin-right: 10px;
+    font-weight: 500 !important;
+    font-style: normal !important;
+  }
+
+  /* ── Module topology (§1) ──────────────────────────────────── */
+  .topo {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    margin-top: 20px;
+  }
+  .topo-title {
+    display: flex; align-items: baseline; gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .topo-title b {
+    font-family: var(--font-display);
+    color: var(--fg);
+    font-size: 20px;
+    font-weight: 500 !important;
+  }
+  .topo-title span { color: var(--muted); font-size: 14px; }
+  .topo-title em {
+    color: var(--meta);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.4px;
+    margin-left: auto;
+    font-style: normal !important;
+  }
+  .topo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .topo-cell {
+    background: var(--surface) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: none;
+    padding: 16px;
+    display: grid;
+    gap: 6px;
+  }
+  .topo-cell.hero {
+    background: var(--surface) !important;
+    box-shadow: var(--elev-ring-accent);
+  }
+  .topo-cell .name, .topo-cell h4 {
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 500 !important;
+    margin: 0;
+  }
+  .topo-cell.hero .name { color: var(--accent); }
+  .topo-cell .desc { color: var(--muted); font-size: 13px; line-height: 1.5; }
+  .topo-cell .pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--radius-xs);
+    background: var(--tag-bg-soft);
+    color: var(--accent);
+    letter-spacing: 0.4px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    justify-self: start;
+    font-weight: 500 !important;
+  }
+  .topo-cell.hero .pill { color: var(--accent); background: var(--tag-bg-base); }
+
+  /* ── Principles / value props ──────────────────────────────── */
+  .principles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .principle {
+    background: var(--surface) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: none;
+    padding: 20px 20px 22px;
+    display: grid;
+    gap: 6px;
+  }
+  .principle .n {
+    color: var(--accent);
+    font-family: var(--font-display);
+    font-weight: 500 !important;
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .principle .h, .principle h4 {
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 500 !important;
+    margin: 0;
+  }
+  .principle .d, .principle .desc {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .principle .sub {
+    color: var(--meta);
+    font-family: var(--font-mono);
+    letter-spacing: 0.4px;
+    font-size: 11px;
+  }
+
+  /* ── Stack list (面向用户) — kami en-dash bullets ─────────── */
+  .stack-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .stack-list li {
+    position: relative;
+    padding: 10px 0 10px 18px;
+    border-bottom: 1px solid var(--border-soft);
+    color: var(--fg-2);
+  }
+  .stack-list li::before {
+    content: "\2013";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+  .stack-list li:last-child { border-bottom: none; }
+  .stack-list li b { color: var(--fg); }
+
+  /* ── Status strip (§2 已跑通) ─────────────────────────────── */
+  .status-strip {
+    background: var(--success-soft) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--success) !important;
+    border-radius: var(--radius-md);
+    box-shadow: none;
+    color: var(--fg-2);
+    padding: 18px 22px;
+  }
+  .status-strip b { color: var(--fg); }
+  .status-strip h3 {
+    font-family: var(--font-display);
+    color: var(--fg);
+    font-weight: 500 !important;
+    margin: 8px 0 12px;
+    font-size: 17px;
+    letter-spacing: 0;
+  }
+  .stamp {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--surface);
+    color: var(--success);
+    border: 1px solid var(--success);
+    border-radius: var(--radius-xs);
+    font-family: var(--font-mono);
+    letter-spacing: 0.4px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 500 !important;
+  }
+  .stamp .icon { font-size: 12px; }
+
+  /* ── Milestone table (§3) ──────────────────────────────────── */
+  .m-table {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .m-table table { width: 100%; border-collapse: collapse; }
+  .m-table th, .m-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-soft);
+    font-family: var(--font-body);
+    color: var(--fg-2);
+    vertical-align: top;
+  }
+  .m-table th {
+    background: var(--surface-warm);
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+  }
+  .m-table tr:last-child td { border-bottom: none; }
+  .m-table .m-current { color: var(--success); font-weight: 500 !important; }
+  .m-table .m-release {
+    background: var(--accent-soft) !important;
+  }
+  .m-table .m-release td { color: var(--fg); }
+  .m-table .m-name { font-weight: 500; color: var(--fg); }
+  .m-table .m-time { font-family: var(--font-mono); color: var(--muted); font-size: 12px; letter-spacing: 0.3px; }
+  .m-table .m-time.tbd { color: var(--warn); }
+  .m-table .m-out span {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--radius-xs);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.4px;
+    font-weight: 500;
+  }
+  .m-table .m-out .no {
+    background: var(--surface-warm);
+    color: var(--muted);
+  }
+  .m-table .m-out .yes {
+    background: var(--accent);
+    color: var(--accent-on);
+  }
+  .m-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--radius-xs);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.4px;
+    background: var(--tag-bg-soft);
+    color: var(--accent);
+    box-shadow: none !important;
+  }
+  .m-pill.pill-release {
+    background: var(--accent);
+    color: var(--accent-on);
+    box-shadow: none !important;
+  }
+  .m-pill.pill-skip {
+    background: var(--surface-warm);
+    color: var(--muted);
+  }
+  .m-why {
+    background: var(--surface) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: none;
+    padding: 20px 24px;
+    margin-top: 20px;
+  }
+  .m-why h3 { color: var(--fg); font-family: var(--font-display); font-weight: 500 !important; margin: 0 0 12px; }
+  .m-why .row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .m-why .row:last-child { border-bottom: none; }
+  .m-why .k {
+    color: var(--meta);
+    font-family: var(--font-mono);
+    letter-spacing: 0.4px;
+    font-size: 12px;
+    padding-top: 2px;
+  }
+  .m-why .v { color: var(--fg-2); }
+  .m-why .v b { color: var(--fg); }
+
+  /* ── Step cards (§4) ──────────────────────────────────────── */
+  .step {
+    background: var(--surface) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: none;
+  }
+  .step.hero, .step.step-release {
+    background: var(--surface) !important;
+    box-shadow: var(--elev-ring-accent);
+  }
+  .step .step-n, .step .step-num {
+    color: var(--accent);
+    font-family: var(--font-display);
+    font-weight: 500 !important;
+  }
+  .step .step-title {
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-weight: 500 !important;
+  }
+  .step .step-tag, .step .stage-tag {
+    background: var(--tag-bg-soft);
+    color: var(--accent);
+    border-radius: var(--radius-xs);
+    font-family: var(--font-mono);
+    letter-spacing: 0.4px;
+    box-shadow: none !important;
+    font-weight: 500 !important;
+    padding: 2px 8px;
+  }
+  .step.hero .step-tag,
+  .step.step-release .stage-tag {
+    background: var(--accent);
+    color: var(--accent-on);
+  }
+  .step .step-lede { color: var(--fg-2); }
+  .step .step-lede b { color: var(--fg); }
+  .step .step-body ul { list-style: none; padding: 0; }
+  .step .step-body ul li {
+    position: relative;
+    padding: 6px 0 6px 16px;
+    color: var(--fg-2);
+  }
+  .step .step-body ul li::before {
+    content: "\2013";
+    position: absolute; left: 0;
+    color: var(--accent);
+  }
+  .step .step-body ul li b { color: var(--fg); }
+
+  /* ── Flow diagram (§5) ────────────────────────────────────── */
+  .flow-diagram {
+    display: grid;
+    justify-items: center;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .flow-node {
+    background: var(--surface) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: none;
+    color: var(--fg-2);
+    padding: 14px 22px;
+    display: grid;
+    gap: 4px;
+    justify-items: center;
+    min-width: 260px;
+    text-align: center;
+  }
+  .flow-node.final, .flow-node.flow-release {
+    background: var(--surface) !important;
+    box-shadow: var(--elev-ring-accent);
+  }
+  .flow-node.final .txt,
+  .flow-node.flow-release .txt { color: var(--accent); }
+  .flow-node .idx {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.4px;
+    color: var(--meta);
+  }
+  .flow-node .txt {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--fg);
+    font-weight: 500 !important;
+  }
+  .flow-node .sub {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .flow-node b { color: var(--fg); }
+  .flow-arrow {
+    color: var(--accent);
+    font-size: 14px;
+    line-height: 1;
+    background: transparent !important;
+  }
+  .flow-arrow::after { content: none; }
+
+  /* ── Risk cards (§6) ──────────────────────────────────────── */
+  .risk, .risk-card {
+    background: var(--surface) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--warn) !important;
+    border-radius: var(--radius-md);
+    box-shadow: none;
+    color: var(--fg-2);
+  }
+  .risk.blocker, .risk-card.risk-blocker {
+    border-left-color: var(--danger) !important;
+  }
+  .risk-head {
+    display: flex; align-items: center; gap: 12px;
+    flex-wrap: wrap;
+  }
+  .risk .risk-num, .risk-card .risk-num {
+    color: var(--warn);
+    font-family: var(--font-display);
+    font-weight: 500 !important;
+  }
+  .risk.blocker .risk-num,
+  .risk-card.risk-blocker .risk-num { color: var(--danger); }
+  .risk .risk-title, .risk-card .risk-title {
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-weight: 500 !important;
+    flex: 1;
+  }
+  /* .risk-tag = left "风险 N" pill */
+  .risk .risk-tag, .risk-card .risk-tag {
+    background: var(--warn-soft);
+    color: var(--warn);
+    border-radius: var(--radius-xs);
+    font-family: var(--font-mono);
+    letter-spacing: 0.4px;
+    font-weight: 500 !important;
+    padding: 2px 8px;
+    box-shadow: none !important;
+  }
+  .risk.blocker .risk-tag,
+  .risk-card.risk-blocker .risk-tag {
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+  /* .risk-block = right "阻塞 Mx" pill */
+  .risk .risk-block {
+    background: var(--tag-bg-soft);
+    color: var(--accent);
+    border-radius: var(--radius-xs);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.4px;
+    font-weight: 500 !important;
+    padding: 2px 8px;
+  }
+  .risk.blocker .risk-block {
+    background: var(--danger);
+    color: var(--accent-on);
+  }
+  .risk-body .kv .k {
+    color: var(--meta);
+    font-family: var(--font-mono);
+    letter-spacing: 0.4px;
+  }
+  .risk-body .kv .v { color: var(--fg-2); }
+  .risk-body .kv .v b { color: var(--fg); }
+  .risk-body-single { color: var(--fg-2); }
+  .risk-body-single b { color: var(--fg); }
+
+  /* ── Ask hero (§7) ────────────────────────────────────────── */
+  .ask-hero {
+    background: var(--surface) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--accent) !important;
+    border-radius: var(--radius-md);
+    box-shadow: none;
+    color: var(--fg-2);
+    padding: 24px 28px;
+  }
+  .ask-hero .lbl {
+    color: var(--meta);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .ask-hero .headline {
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-size: 20px;
+    line-height: 1.55;
+    font-weight: 500 !important;
+  }
+  .ask-hero h3 { color: var(--fg); font-family: var(--font-display); font-weight: 500 !important; }
+  .ask-hero b { color: var(--fg); }
+  .deliv-title {
+    font-family: var(--font-display);
+    color: var(--fg);
+    font-size: 17px;
+    font-weight: 500 !important;
+    margin: 32px 0 12px;
+    letter-spacing: 0;
+  }
+  .why-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .why-list li {
+    position: relative;
+    padding: 10px 0 10px 18px;
+    border-bottom: 1px solid var(--border-soft);
+    color: var(--fg-2);
+  }
+  .why-list li::before {
+    content: "\2013";
+    position: absolute; left: 0;
+    color: var(--accent);
+  }
+  .why-list li:last-child { border-bottom: none; }
+  .why-list li b { color: var(--fg); }
+
+  /* ── Deliverables table (§7) ──────────────────────────────── */
+  .deliv-table {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .deliv-table table { width: 100%; border-collapse: collapse; }
+  .deliv-table th, .deliv-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-soft);
+    color: var(--fg-2);
+    vertical-align: top;
+    font-family: var(--font-body);
+  }
+  .deliv-table th {
+    background: var(--surface-warm);
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+  }
+  .deliv-table tr:last-child td { border-bottom: none; }
+  .deliv-table td b { color: var(--fg); }
+  .deliv-table .risk-ref {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: var(--radius-xs);
+    background: var(--tag-bg-soft);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.4px;
+  }
+
+  /* ── Foot ─────────────────────────────────────────────────── */
+  .foot { color: var(--muted); border-top-color: var(--border-ink); }
+  .foot a {
+    color: var(--accent);
+    border-bottom: 1px dashed var(--accent);
+  }
+
+  /* ── TOC ──────────────────────────────────────────────────── */
+  .toc a { color: var(--meta); font-family: var(--font-mono); }
+  .toc a::before { background: currentColor; }
+  .toc a:hover, .toc a[aria-current="true"] { color: var(--accent); }
+
+  /* ── Tabular numerics everywhere numbers stack ────────────── */
+  .tldr-card, .m-table, .deliv-table, .cover-meta,
+  .foot, .toc, .risk-card .risk-num, .step .step-num,
+  .principle .n {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Nuclear border-color override — kills residual blue-glow borders
+   * from pre-override styles. All decorated containers get the warm
+   * kami border; accent emphasis is expressed by border-LEFT color,
+   * not border-color. ──────────────────────────────────────────── */
+  body.report .tldr-card,
+  body.report .tldr-card.accent,
+  body.report .tldr-card.hero,
+  body.report .callout,
+  body.report .callout-quote,
+  body.report .why-block,
+  body.report .conclusion,
+  body.report .ask-hero,
+  body.report .topo-cell,
+  body.report .topo-cell.hero,
+  body.report .principle,
+  body.report .status-strip,
+  body.report .m-why,
+  body.report .step,
+  body.report .step.hero,
+  body.report .step.step-release,
+  body.report .flow-node,
+  body.report .flow-node.final,
+  body.report .flow-node.flow-release,
+  body.report .risk,
+  body.report .risk-card,
+  body.report .m-table,
+  body.report .deliv-table,
+  body.report .topo {
+    border-color: var(--border) !important;
+  }
+  /* Left-rule accent override for containers that use border-left to
+   * carry chromatic identity — re-apply after nuclear override. */
+  body.report .callout,
+  body.report .callout-quote,
+  body.report .why-block,
+  body.report .conclusion,
+  body.report .ask-hero {
+    border-left-color: var(--accent) !important;
+  }
+  body.report .status-strip {
+    border-left-color: var(--success) !important;
+  }
+  body.report .risk,
+  body.report .risk-card {
+    border-left-color: var(--warn) !important;
+  }
+  body.report .risk.blocker,
+  body.report .risk-card.risk-blocker {
+    border-left-color: var(--danger) !important;
+  }
+  /* Accent ring-shadow re-apply (over blue glow shadow from prior rules). */
+  body.report .tldr-card.accent,
+  body.report .tldr-card.hero,
+  body.report .topo-cell.hero,
+  body.report .step.hero,
+  body.report .step.step-release,
+  body.report .flow-node.final,
+  body.report .flow-node.flow-release {
+    box-shadow: var(--elev-ring-accent) !important;
+  }
+
+  /* ── Print — kami's actual home turf ──────────────────────── */
+  @media print {
+    body.report { background: var(--bg); }
+    .toc { display: none; }
+    .tldr-card, .topo-cell, .principle, .step, .m-why,
+    .risk-card, .ask-hero, .callout, .m-table, .deliv-table,
+    .status-strip, .flow-node {
+      break-inside: avoid;
+      box-shadow: none;
+    }
+    @page { size: A4; margin: 14mm 16mm; background: var(--bg); }
+  }
+</style>
+</head>
+<body class="report">
+
+<nav class="toc" aria-label="目录">
+  <a href="#定位">§1 定位</a>
+  <a href="#进展">§2 进展</a>
+  <a href="#里程碑">§3 里程碑</a>
+  <a href="#规划">§4 规划</a>
+  <a href="#逻辑">§5 逻辑</a>
+  <a href="#风险">§6 风险</a>
+</nav>
+
+<div class="report-page">
+
+  <!-- ═════════════════════ 封面 ═════════════════════ -->
+  <div class="cover" data-od-id="cover">
+    <div class="cover-kicker">
+      <span class="dot"></span>
+      <span>GTM Copilot · 项目进度汇报 · 2025.07.14</span>
+    </div>
+    <h1>GTM Copilot 项目进度汇报 7.14</h1>
+    <div class="tldr">
+      <div class="tldr-card accent">
+        <div class="label">进展</div>
+        <div class="headline">材料生成 0→1 主链路已跑通</div>
+        <div class="body">Agent CLI + officeCLI + 材料生成 Skill 打通;内部 1-2 名产线成员可试用。</div>
+      </div>
+      <div class="tldr-card">
+        <div class="label">节奏</div>
+        <div class="headline">M4 一次性对外亮相</div>
+        <div class="body">M1-M3 蓄能,不做外部推广。<b>M4</b> 带两大核心场景一起发布。</div>
+      </div>
+      <div class="tldr-card">
+        <div class="label">风险</div>
+        <div class="headline">三大风险</div>
+        <div class="body">技术选型与开发效率 / 多材料库编排 / 评测体系</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════ §1 定位 ═════════════════════ -->
+  <section class="chapter" id="定位" data-od-id="ch-1">
+    <div class="chapter-head">
+      <div class="n">§ 01</div>
+      <h2>一、项目定位:我们在做一个什么样的产品</h2>
+      <p class="lede">一句话:面向公司销售材料生产全链路的 <b>Agent 工作台</b>——从"人推"改为"<b>Agent 推 + 人决策</b>"。</p>
+    </div>
+
+    <div class="prose">
+      <p>销售材料的生产今天散落在 GTM、产线、销售、售前四类角色手里,靠 IM 群、周会、Excel 台账推着走——<b>派发靠人催、写作靠 Word 满天飞、审核靠肉眼、归档靠人搬</b>。GTM Copilot 的定位就是把这条链路收进一个系统:<b>Agent 顶掉重复劳动,人只做决策和创作</b>。</p>
+    </div>
+
+    <div class="callout">
+      <div class="tag">目标形态</div>
+      四大模块承载 <b>派发 → 撰写 → 预审 → 审核 → 上架</b> 完整链路。
+    </div>
+
+    <div class="topo">
+      <div class="topo-title">
+        <b>GTM Copilot</b>
+        <span>销售材料生产全链路 Agent 工作台</span>
+        <em>4 modules</em>
+      </div>
+      <div class="topo-grid">
+        <div class="topo-cell hero">
+          <div class="name">材料进度中心</div>
+          <div class="desc">派发 + 审核 + 看板</div>
+          <div class="pill">GTM 视角</div>
+        </div>
+        <div class="topo-cell">
+          <div class="name">个人材料工作区</div>
+          <div class="desc">对话式生产 / 定制</div>
+          <div class="pill">产线 · 销售 · 售前</div>
+        </div>
+        <div class="topo-cell">
+          <div class="name">资料库</div>
+          <div class="desc">查看 + 取用</div>
+          <div class="pill">全员可见</div>
+        </div>
+        <div class="topo-cell">
+          <div class="name">管理中心</div>
+          <div class="desc">组织级配置</div>
+          <div class="pill">仅管理员</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--fg); margin: 32px 0 12px; letter-spacing: -0.005em;">面向用户</h3>
+    <ul class="stack-list">
+      <li><b>GTM 团队</b> · 派发 / 追踪 / 审核 / 上架 · 材料进度中心 + 审核工作台</li>
+      <li><b>产线 · 销售 · 售前</b> · 撰写 / 定制 / 提交 · 个人材料工作区</li>
+      <li><b>公司全员</b> · 查看 / 取用 · 资料库</li>
+      <li><b>管理员</b> · 组织级配置 · 管理中心</li>
+    </ul>
+
+    <h3 style="font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--fg); margin: 32px 0 12px; letter-spacing: -0.005em;">核心价值主张</h3>
+    <div class="principles">
+      <div class="principle">
+        <div class="n">01</div>
+        <div class="h">人只做人该做的事</div>
+        <div class="d">决策 / 创作留给人,派发 / 催办 / 预审 / 归类 / 通知交给 Agent。</div>
+      </div>
+      <div class="principle">
+        <div class="n">02</div>
+        <div class="h">Agent 起草、人定稿</div>
+        <div class="d">不管撰写还是审核,都是"AI 干起草、人干判断"。</div>
+      </div>
+      <div class="principle">
+        <div class="n">03</div>
+        <div class="h">每一步产出即下一步输入</div>
+        <div class="d">没有 docx 满天飞,系统内一份稿件贯穿始终。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ §2 进展 ═════════════════════ -->
+  <section class="chapter" id="进展" data-od-id="ch-2">
+    <div class="chapter-head">
+      <div class="n">§ 02</div>
+      <h2>二、当前进展:主链路已跑通 ✅</h2>
+    </div>
+
+    <div class="status-strip">
+      <div class="stamp"><span class="icon">✓</span> 已跑通 · 内部试用中</div>
+      <h3>技术架构 · 集成完毕</h3>
+      <ul class="stack-list">
+        <li>集成 <b>AionUi Agent CLI</b>(底层为 Claude Code CLI)作为 Agent 执行框架</li>
+        <li>打通 <b>officeCLI + 材料生成 Skill</b> 的调用链路</li>
+        <li><b>材料生成场景(0→1 从无到有)</b> 核心功能已完成</li>
+      </ul>
+    </div>
+
+    <div class="callout" style="margin-top: 24px;">
+      <div class="tag">结论</div>
+      项目从 <b>技术可行性验证阶段</b> 进入 <b>产品打磨阶段</b>——链路走通不等于产品可发布,接下来要把体验做扎实、把能力做闭环、把内容库做厚,才能撑起 <b>M4 对外亮相</b>。
+    </div>
+  </section>
+
+  <!-- ═════════════════════ §3 里程碑 ═════════════════════ -->
+  <section class="chapter" id="里程碑" data-od-id="ch-3">
+    <div class="chapter-head">
+      <div class="n">§ 03</div>
+      <h2>三、里程碑与发布节奏</h2>
+      <p class="lede">五个里程碑,只有 <b>M4</b> 是对外发布节点。M1 已达成、M2–M3 蓄能、M4 一次性亮相、M5 面向组织级铺开。</p>
+    </div>
+
+    <table class="m-table">
+      <thead>
+        <tr>
+          <th>里程碑</th>
+          <th>时间</th>
+          <th>交付内容</th>
+          <th>面向用户</th>
+          <th>是否发布</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="m-name">M1 · 主链路</td>
+          <td class="m-time">已达成</td>
+          <td>Agent CLI + officeCLI + 材料生成 Skill 打通;<b>材料生成 0→1</b> 可用</td>
+          <td>内部 1–2 名产线试用</td>
+          <td class="m-out"></td>
+        </tr>
+        <tr>
+          <td class="m-name">M2 · 体验打磨</td>
+          <td class="m-time tbd">TBD</td>
+          <td>五阶段流式可视化 + 任务名称自动生成 + <b>1→10 改进场景</b>(修订对话 / 本地往返)</td>
+          <td>内部小范围产线扩量</td>
+          <td class="m-out"></td>
+        </tr>
+        <tr>
+          <td class="m-name">M3 · 材料库</td>
+          <td class="m-time tbd">TBD</td>
+          <td>各产线 <b>24 类标准材料</b> 补齐;材料库详情页落地</td>
+          <td>产线全员维护、GTM 抽检</td>
+          <td class="m-out"></td>
+        </tr>
+        <tr class="hero">
+          <td class="m-name">M4 · 解决方案生成</td>
+          <td class="m-time tbd">TBD</td>
+          <td>行业 × 多产线材料库 → <b>定制化解决方案</b> 生成;多库检索融合、跨产线语义对齐</td>
+          <td><b>对外发布 · 销售 / 售前主用</b></td>
+          <td class="m-out"><span class="yes">✓ 首发</span></td>
+        </tr>
+        <tr>
+          <td class="m-name">M5 · 组织铺开</td>
+          <td class="m-time tbd">TBD</td>
+          <td>组织级配置 / 权限 / 审计 / 数据看板;评测体系产品化</td>
+          <td>全公司</td>
+          <td class="m-out"></td>
+        </tr>
+      </tbody>
+    </table>
+
+  </section>
+  <!-- ═════════════════════ §4 规划 ═════════════════════ -->
+  <section class="chapter" id="规划" data-od-id="ch-4">
+    <div class="chapter-head">
+      <div class="n">§ 04</div>
+      <h2>四、下一阶段规划(按优先级四步走)</h2>
+      <p class="lede">前三步都在为第四步"解决方案生成"做铺垫,四步严格先后依赖。</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">01</div>
+        <div class="step-body">
+          <div class="step-title">材料生成体验打磨</div>
+          <div class="step-lede">主链路虽通,但前端呈现仍有细节需优化——重点是<b>执行过程五阶段流式可视化</b>与<b>任务名称自动生成</b>。</div>
+          <ul>
+            <li><b>五阶段流式呈现</b>:任务解析 → 材料检索 → 内容起草 → 格式化 → 交付 · 每阶段实时状态可见</li>
+            <li><b>任务名称自动生成</b>:根据 prompt 首帧解析出简短标题,避免"未命名任务"堆积</li>
+            <li><b>失败态与人工介入</b>:每一步失败都能被前端捕获、可重试、可手动接管</li>
+            <li><b>生成 Skill 持续优化</b>:基于产线试用反馈迭代 Prompt、工具调用与生成质量,形成评测—优化—回归闭环</li>
+          </ul>
+        </div>
+        <span class="step-tag">M2</span>
+      </div>
+
+      <div class="step">
+        <div class="step-n">02</div>
+        <div class="step-body">
+          <div class="step-title">材料生成 1→10 改进场景</div>
+          <div class="step-lede">从"从零生成"扩展到"基于已有材料迭代改进",覆盖<b>修订对话</b>与<b>本地往返</b>两条改稿路径,把 0→1 升级为全生命周期材料运营。</div>
+          <ul>
+            <li><b>修订对话</b>:在系统内针对某段落 / 图 / 数据直接下达修改指令,Agent 定点改写</li>
+            <li><b>本地往返</b>:导出 docx → 客户改 → 传回系统 → Agent 识别 diff → 合并入主稿</li>
+            <li><b>版本树</b>:一份材料的所有分支 / 定制版 / 客户返稿都挂在同一份主稿下</li>
+          </ul>
+        </div>
+        <span class="step-tag">M2</span>
+      </div>
+
+      <div class="step">
+        <div class="step-n">03</div>
+        <div class="step-body">
+          <div class="step-title">产品材料库维护与上新</div>
+          <div class="step-lede">解决方案生成的<b>数据 / 知识底座</b>。现状:只有首页前端,详情页尚未落地——需补齐各产线 <b>24 类标准材料</b> 内容。</div>
+          <ul>
+            <li><b>详情页落地</b>:每类材料有清晰的字段 schema、状态、责任人、更新记录</li>
+            <li><b>24 类内容补齐</b>:白皮书 / 案例 / FAQ / 竞品分析 / 报价…每类由对应产线负责</li>
+            <li><b>治理机制</b>:过期提醒、抽检、下架流程,防止材料库变成"档案坟"</li>
+          </ul>
+        </div>
+        <span class="step-tag">M3</span>
+      </div>
+
+      <div class="step hero">
+        <div class="step-n">04</div>
+        <div class="step-body">
+          <div class="step-title">解决方案生成场景(发布主打能力)</div>
+          <div class="step-lede">用户选行业 → 勾多个产线材料库(seaf + AI 知识库 + Qpass…)→ 生成定制化方案。技术难点:多库检索融合、跨产线语义对齐、Agent 编排 / RAG / 多轮规划。<b>产品从"单点工具"升级为"解决方案引擎"。</b></div>
+          <ul>
+            <li><b>多库检索融合</b>:seaf / AI 知识库 / Qpass 三个异构底座的统一检索接口</li>
+            <li><b>跨产线语义对齐</b>:不同产线术语 / 卖点 / 参数体系的对齐层</li>
+            <li><b>Agent 编排 · RAG · 多轮规划</b>:从行业 brief 到成品方案文档的端到端 pipeline</li>
+          </ul>
+        </div>
+        <span class="step-tag">M4 · 发布</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ §5 逻辑 ═════════════════════ -->
+  <section class="chapter" id="逻辑" data-od-id="ch-5">
+    <div class="chapter-head">
+      <div class="n">§ 05</div>
+      <h2>五、四步之间的内在逻辑</h2>
+    </div>
+
+    <div class="flow-diagram">
+      <div class="flow-node">
+        <span class="idx">STEP 1</span>
+        <span class="txt">体验打磨</span>
+        <span class="sub">生产可用</span>
+      </div>
+      <div class="flow-arrow">▼</div>
+      <div class="flow-node">
+        <span class="idx">STEP 2</span>
+        <span class="txt">1→10 改进</span>
+        <span class="sub">能力闭环</span>
+      </div>
+      <div class="flow-arrow">▼</div>
+      <div class="flow-node">
+        <span class="idx">STEP 3</span>
+        <span class="txt">材料库补齐</span>
+        <span class="sub">数据底座</span>
+      </div>
+      <div class="flow-arrow">▼</div>
+      <div class="flow-node final">
+        <span class="idx">STEP 4</span>
+        <span class="txt">解决方案生成</span>
+        <span class="sub">价值跃升 · 对外发布</span>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 28px;">
+      <div class="tag">因果</div>
+      没有稳定的执行体验、完整的迭代能力、丰富的产线内容,<b>解决方案生成就无法落地,产品也就无法对外发布</b>。
+    </div>
+  </section>
+
+  <!-- ═════════════════════ §6 风险 ═════════════════════ -->
+  <section class="chapter" id="风险" data-od-id="ch-6">
+    <div class="chapter-head">
+      <div class="n">§ 06</div>
+      <h2>六、当前最大的不确定性(风险)</h2>
+      <p class="lede">项目继续推进面临以下不确定性——<b>M4 是唯一发布节点,任何一个失控都直接影响发布质量</b>。</p>
+    </div>
+
+    <div class="risks">
+      <div class="risk">
+        <div class="risk-head">
+          <span class="risk-tag">风险 1</span>
+          <span class="risk-title">技术选型与开发效率缺少资深判断,有一定试错成本</span>
+          <span class="risk-block">阻塞 M4</span>
+        </div>
+        <div class="risk-body">
+          <div class="kv">
+            <div class="k">问题</div>
+            <div class="v">缺少资深工程师做前置判断,只能靠试错收敛方向。</div>
+          </div>
+          <div class="kv">
+            <div class="k">影响</div>
+            <div class="v">M4 的解决方案生成技术选型复杂度更高,同样靠试错收敛。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="risk blocker">
+        <div class="risk-head">
+          <span class="risk-tag">风险 2</span>
+          <span class="risk-title">多材料库编排的技术路径未验证</span>
+          <span class="risk-block">阻塞 M4</span>
+        </div>
+        <div class="risk-body">
+          <div class="kv">
+            <div class="k">问题</div>
+            <div class="v">第四步是新命题——走 <b>RAG?Agent-as-Tool?Sub-Agent 编排?</b> 三种方案在多库融合场景下各有短板,没有专人预研。</div>
+          </div>
+          <div class="kv">
+            <div class="k">影响</div>
+            <div class="v">方向选错,<b>M4 会推倒重来</b>;而 M4 是唯一发布节点——<b>直接决定发布能不能如期</b>。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="risk">
+        <div class="risk-head">
+          <span class="risk-tag">风险 3</span>
+          <span class="risk-title">Agent 输出效果的评测体系缺失</span>
+          <span class="risk-block">全阶段</span>
+        </div>
+        <div class="risk-body">
+          <div class="kv">
+            <div class="k">问题</div>
+            <div class="v">0-1 项目没真实用户反馈,判断 Agent 输出好坏完全靠<b>主观拍脑袋</b>——没有基准集、没有评分维度、没有回归 pipeline。</div>
+          </div>
+          <div class="kv">
+            <div class="k">影响</div>
+            <div class="v">迭代方向不可信;<b>发布前无法系统验证质量,发布后无法数据驱动优化</b>——每次改动都是"感觉变好了"。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════ 页脚 ═════════════════════ -->
+  <div class="foot">
+    <span>GTM Copilot · 项目进度汇报 · 2025.07.14</span>
+    <span>Design system · <a href="index.html">kami (紙 / 纸)</a></span>
+  </div>
+
+</div>
+
+<script>
+  // 平滑滚动 · 目录点击
+  document.querySelectorAll('.toc a').forEach(a => {
+    a.addEventListener('click', e => {
+      const id = a.getAttribute('href');
+      if (id && id.startsWith('#')) {
+        const t = document.querySelector(id);
+        if (t) {
+          e.preventDefault();
+          window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - 24, behavior: 'smooth' });
+        }
+      }
+    });
+  });
+</script>
+
+
+</body></html>
